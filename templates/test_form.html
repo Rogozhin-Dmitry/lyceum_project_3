@@ -14,7 +14,6 @@
 <nav>
 {% if current_user.is_authenticated %}
     <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
-<a class="navbar-brand" href="/profile/{{current_user.id}}">Профиль</a>
 {% else %}
     <p>
         <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
@@ -22,11 +21,12 @@
     </p>
 {% endif %}
 </nav>
-<p>Здесь что-то должно быть (Но пока нету)</p>
-<input type="radio" name="sex" value="male" id="male-radio">
-<label for="male-radio"><img src="http://images4.wikia.nocookie.net/__cb20070502203647/wikiality/images/e/ed/WomanIcon.png"></label>
-
-<input type="radio" name="sex" value="female" id="female-radio">
-<label for="female-radio"><img src="http://images4.wikia.nocookie.net/__cb20070502203647/wikiality/images/e/ed/WomanIcon.png"></label>
+ <form method=post>
+      {% for subfield in form.images %}
+           <td>{{subfield}}</td>
+           <p>{{subfield.label}}</p>
+           <img src="{{url_for('static', filename='img/test.jpg')}}" width="400" height="400"/>
+      {% endfor %}
+ </form>
 </body>
 </html>

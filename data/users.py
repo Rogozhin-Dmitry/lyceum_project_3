@@ -4,6 +4,16 @@ from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy import orm
+
+association_table = sqlalchemy.Table(
+    'association',
+    SqlAlchemyBase.metadata,
+    sqlalchemy.Column('users', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('users.id')),
+    sqlalchemy.Column('tests', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('tests.id'))
+)
 
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
@@ -21,6 +31,9 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                                       default=datetime.datetime.now)
     score = sqlalchemy.Column(sqlalchemy.Integer,
                               default=0)
+    passed_test = orm.relation("Test",
+                               secondary="association",
+                               backref="users")
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

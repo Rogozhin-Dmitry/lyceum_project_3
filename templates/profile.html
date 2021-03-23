@@ -22,11 +22,11 @@
     </p>
 {% endif %}
 </nav>
-<p>Здесь что-то должно быть (Но пока нету)</p>
-<input type="radio" name="sex" value="male" id="male-radio">
-<label for="male-radio"><img src="http://images4.wikia.nocookie.net/__cb20070502203647/wikiality/images/e/ed/WomanIcon.png"></label>
-
-<input type="radio" name="sex" value="female" id="female-radio">
-<label for="female-radio"><img src="http://images4.wikia.nocookie.net/__cb20070502203647/wikiality/images/e/ed/WomanIcon.png"></label>
+<p>Профиль:</p>
+<p>Имя:{{name}}</p>
+<p>Фамилия:{{surname}}</p>
+<p>Статус:{{status}}</p>
+<p>Почта:{{email}}</p>
+<a class="btn btn-primary " href="/user_edit/{{current_user.id}}">Изменить</a>
 </body>
 </html>
