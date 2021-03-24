@@ -1,8 +1,11 @@
 from data import db_session
 from flask import Flask, render_template, url_for, redirect, request, abort
 from data.users import User
+from data.categories import Category
 from forms.user import RegisterForm, LoginForm, ChangeForm
 from forms.first_tests import FirstTestForm
+from forms.list_of_tests import TestForm
+from data.tests import Test, FirstTest, SecondTest
 from flask_login import LoginManager
 from flask_login import login_user, login_required, logout_user, current_user
 from flask import make_response, jsonify
@@ -23,9 +26,23 @@ def main():
     db_session.global_init("db/site_data.db")
     db_sess = db_session.create_session()
     db_sess.query(User).delete()
+    db_sess.query(Category).delete()
+    db_sess.query(Test).delete()
+    db_sess.query(FirstTest).delete()
+    db_sess.query(SecondTest).delete()
     random_user = User(name="Eshly", surname="Dark", status="student", email="alpusik2000004@gmail.com")
+    first_language = Category(name="English")
+    second_language = Category(name="Japanese")
     random_user.set_password("Pokepark2")
+    first_test = FirstTest(title="something", language_id=1, creator=1)
+    second_test = FirstTest(title="something2", language_id=2, creator=1)
+    third_test = SecondTest(title="something3", language_id=2, creator=1)
     db_sess.add(random_user)
+    db_sess.add(first_test)
+    db_sess.add(first_language)
+    db_sess.add(second_language)
+    db_sess.add(third_test)
+    db_sess.add(second_test)
     db_sess.commit()
 
 
@@ -34,9 +51,26 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/tests_list")
+@app.route("/tests_list", methods=['GET', 'POST'])
 def test_list():
-    return render_template("tests_list.html")
+    form = TestForm()
+    db_sess = db_session.create_session()
+    categories = db_sess.query(Category).all()
+    used = ['all']
+    for category in categories:
+        if category.name not in used:
+            used.append(category.name)
+    form.languages.choices = used
+    if request.method == "GET":
+        tests = db_sess.query(Test).all()
+        return render_template("tests_list.html", form=form, tests=tests)
+    if form.validate_on_submit():
+        now_language = form.languages.data
+        if now_language == "all":
+            tests = db_sess.query(Test).all()
+        else:
+            tests = db_sess.query(Test).filter(Test.language_id == used.index(now_language))
+        return render_template("tests_list.html", form=form, tests=tests)
 
 
 @app.route('/user_edit/<int:id>', methods=['GET', 'POST'])
