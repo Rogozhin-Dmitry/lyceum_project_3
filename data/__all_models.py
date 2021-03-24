@@ -1,1 +1,1 @@
-from . import users, tests
+from . import users, tests, categories

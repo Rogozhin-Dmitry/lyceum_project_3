@@ -34,6 +34,11 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/tests_list")
+def test_list():
+    return render_template("tests_list.html")
+
+
 @app.route('/user_edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_user(id):
