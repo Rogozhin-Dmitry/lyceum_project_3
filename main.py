@@ -2,13 +2,13 @@ from data import db_session
 from flask import Flask, render_template, url_for, redirect, request, abort
 from data.users import User
 from data.categories import Category
+from data.first_test_page import FirstTestPage
 from forms.user import RegisterForm, LoginForm, ChangeForm
 from forms.first_tests import FirstTestForm
 from forms.list_of_tests import TestForm
 from data.tests import Test, FirstTest, SecondTest
 from flask_login import LoginManager
-from flask_login import login_user, login_required, logout_user, current_user
-from flask import make_response, jsonify
+from flask_login import login_user, login_required, logout_user
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -30,13 +30,18 @@ def main():
     db_sess.query(Test).delete()
     db_sess.query(FirstTest).delete()
     db_sess.query(SecondTest).delete()
+    db_sess.query(FirstTestPage).delete()
     random_user = User(name="Eshly", surname="Dark", status="student", email="alpusik2000004@gmail.com")
     first_language = Category(name="English")
     second_language = Category(name="Japanese")
     random_user.set_password("Pokepark2")
-    first_test = FirstTest(title="something", language_id=1, creator=1)
-    second_test = FirstTest(title="something2", language_id=2, creator=1)
-    third_test = SecondTest(title="something3", language_id=2, creator=1)
+    some_page = FirstTestPage(
+        image_list='/static/img/first_test/1/test1.jpg, /static/img/first_test/1/test2.jpg, /static/img/first_test/1/test3.jpg',
+        right_image_number=1)
+    first_test = FirstTest(title="something", language_id=1, creator=1, type='first_tests')
+    second_test = FirstTest(title="something2", language_id=2, creator=1, type='first_tests')
+    third_test = SecondTest(title="something3", language_id=2, creator=1, type='second_tests')
+    first_test.pages.append(some_page)
     db_sess.add(random_user)
     db_sess.add(first_test)
     db_sess.add(first_language)
@@ -101,13 +106,34 @@ def edit_user(id):
                            )
 
 
-@app.route('/first_test', methods=['GET', 'POST'])
+@app.route('/first_tests/<int:id>', methods=['GET', 'POST'])
 @login_required
-def first_test():
+def first_test(id):
+    # current_score = int(request.cookies.get("current_score", 0))
+    db_sess = db_session.create_session()
+    test = db_sess.query(FirstTest).filter(FirstTest.id == id).first()
     form = FirstTestForm()
+    current_page = test.pages[0]
+    images_list = []
+    for image in current_page.image_list.split(', '):
+        # new_url = url_for('static', filename=image)
+        images_list.append(image)
+        print(image)
+    form.images.choices = images_list
     if form.validate_on_submit():
-        return redirect('/')
+        if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
+            return redirect('/test_succeed/' + str(id))
+        else:
+            return render_template('test_form.html', form=form, message="Неправильный ответ, попробуй ещё раз")
     return render_template('test_form.html', form=form)
+
+
+@app.route('/test_succeed/<int:id>')
+@login_required
+def test_succeed(id):
+    db_sess = db_session.create_session()
+    test = db_sess.query(FirstTest).filter(FirstTest.id == id).first()
+    return render_template('test_succeed.html', test=test)
 
 
 @app.route("/profile/<int:user_id>")

@@ -2,11 +2,16 @@ import datetime
 import sqlalchemy
 from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
-
 from .db_session import SqlAlchemyBase
-from sqlalchemy.dialects import mysql
 
-from .db_session import SqlAlchemyBase
+association_table = sqlalchemy.Table(
+    'test_association',
+    SqlAlchemyBase.metadata,
+    sqlalchemy.Column('first_tests', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('first_tests.id')),
+    sqlalchemy.Column('first_test_page', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('first_test_page.id'))
+)
 
 
 class Test(SqlAlchemyBase, SerializerMixin):
@@ -34,6 +39,9 @@ class Test(SqlAlchemyBase, SerializerMixin):
 class FirstTest(Test):
     __tablename__ = 'first_tests'
     id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('tests.id'), primary_key=True)
+    pages = orm.relation("FirstTestPage",
+                               secondary="test_association",
+                               backref="first_tests")
     __mapper_args__ = {
         'polymorphic_identity': 'first_tests',
     }

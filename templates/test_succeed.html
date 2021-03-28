@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block head %}{% endblock %}
     <link rel="stylesheet"
           href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
@@ -20,23 +21,6 @@
     </p>
 {% endif %}
 </nav>
-    <form action="" method="post" class="item">
-         <h1>Тесты</h1>
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.languages.label }}<br>
-            {{ form.languages(class="form-control", type="languages") }}<br>
-            {% for error in form.languages.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-        <div>{{ message }}</div>
-    </form>
-{% for test in tests %}
-<p><a href="/{{test.type}}/{{test.id}}">{{test.title}}</a></p>
- {% endfor %}
+<h1>Поздравляю, ты прошёл тест {{test.tytle}}</h2>
 </body>
 </html>

@@ -21,12 +21,14 @@
     </p>
 {% endif %}
 </nav>
- <form method=post>
-      {% for subfield in form.images %}
+<form action="" method="post" class="item">
+        {{ form.hidden_tag() }}
+           {% for subfield in form.images %}
            <td>{{subfield}}</td>
-           <p>{{subfield.label}}</p>
-           <img src="{{url_for('static', filename='img/test.jpg')}}" width="400" height="400"/>
-      {% endfor %}
- </form>
+           <img src="{{subfield.data}}" width="200" height="200"/>
+           {% endfor %}
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        <div>{{ message }}</div>
+    </form>
 </body>
 </html>
