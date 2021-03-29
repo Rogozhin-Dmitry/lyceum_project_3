@@ -40,17 +40,29 @@ class FirstTest(Test):
     __tablename__ = 'first_tests'
     id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('tests.id'), primary_key=True)
     pages = orm.relation("FirstTestPage",
-                               secondary="test_association",
-                               backref="first_tests")
+                         secondary="test_association",
+                         backref="first_tests")
     __mapper_args__ = {
         'polymorphic_identity': 'first_tests',
     }
 
 
+another_association_table = sqlalchemy.Table(
+    'second_test_association',
+    SqlAlchemyBase.metadata,
+    sqlalchemy.Column('second_tests', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('second_tests.id')),
+    sqlalchemy.Column('second_test_page', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('second_test_page.id'))
+)
+
+
 class SecondTest(Test):
     __tablename__ = 'second_tests'
     id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey('tests.id'), primary_key=True)
-    # добавим контента
+    pages = orm.relation("SecondTestPage",
+                         secondary="second_test_association",
+                         backref="second_tests")
 
     __mapper_args__ = {
         'polymorphic_identity': 'second_tests',
