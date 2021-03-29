@@ -22,6 +22,7 @@
 {% endif %}
 </nav>
 <form action="" method="post" class="item">
+<h3>{{question}}</h3>
         {{ form.hidden_tag() }}
            {% for subfield in form.images %}
            <td>{{subfield}}</td>

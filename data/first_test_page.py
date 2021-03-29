@@ -10,3 +10,4 @@ class FirstTestPage(SqlAlchemyBase, SerializerMixin):
                            primary_key=True, autoincrement=True)
     image_list = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     right_image_number = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    question = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)

@@ -1,5 +1,5 @@
 from data import db_session
-from flask import Flask, render_template, url_for, redirect, request, abort
+from flask import Flask, render_template, url_for, redirect, request, abort, make_response, session
 from data.users import User
 from data.categories import Category
 from data.first_test_page import FirstTestPage
@@ -37,11 +37,20 @@ def main():
     random_user.set_password("Pokepark2")
     some_page = FirstTestPage(
         image_list='/static/img/first_test/1/test1.jpg, /static/img/first_test/1/test2.jpg, /static/img/first_test/1/test3.jpg',
-        right_image_number=1)
-    first_test = FirstTest(title="something", language_id=1, creator=1, type='first_tests')
+        right_image_number=1, question="Какая фапута лучше?")
+    second_page = FirstTestPage(
+        image_list='/static/img/first_test/1/test4.jpg, /static/img/first_test/1/test5.jpg, /static/img/first_test/1/test6.jpg',
+        right_image_number=2, question="Какая картинка лучше?")
+    third_page = FirstTestPage(
+        image_list='/static/img/first_test/1/test7.png, /static/img/first_test/1/test5.png, /static/img/first_test/1/test6.png',
+        right_image_number=1, question="Какой каштан лучше?")
+    first_test = FirstTest(title="something", language_id=1, creator=1, type='first_tests',
+                           title_picture='/static/img/first_test/1/title.jpg')
     second_test = FirstTest(title="something2", language_id=2, creator=1, type='first_tests')
     third_test = SecondTest(title="something3", language_id=2, creator=1, type='second_tests')
     first_test.pages.append(some_page)
+    first_test.pages.append(second_page)
+    first_test.pages.append(third_page)
     db_sess.add(random_user)
     db_sess.add(first_test)
     db_sess.add(first_language)
@@ -106,26 +115,70 @@ def edit_user(id):
                            )
 
 
-@app.route('/first_tests/<int:id>', methods=['GET', 'POST'])
+# @app.route('/first_tests/<int:id>', methods=['GET', 'POST'])
+# @login_required
+# def first_test(id):
+#     # current_score = int(request.cookies.get("current_score", 0))
+#     db_sess = db_session.create_session()
+#     test = db_sess.query(FirstTest).filter(FirstTest.id == id).first()
+#     form = FirstTestForm()
+#     current_page = test.pages[0]
+#     question = current_page.question
+#     images_list = []
+#     for image in current_page.image_list.split(', '):
+#         # new_url = url_for('static', filename=image)
+#         images_list.append(image)
+#         print(image)
+#     form.images.choices = images_list
+#     if form.validate_on_submit():
+#         if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
+#             return redirect('/test_succeed/' + str(id))
+#         else:
+#             return render_template('test_form.html', form=form, message="Неправильный ответ, попробуй ещё раз",
+#                                    question=question)
+#     return render_template('test_form.html', form=form, question=question)
+
+
+@app.route('/first_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
 @login_required
-def first_test(id):
-    # current_score = int(request.cookies.get("current_score", 0))
+def first_test(id, page_number):
     db_sess = db_session.create_session()
     test = db_sess.query(FirstTest).filter(FirstTest.id == id).first()
     form = FirstTestForm()
-    current_page = test.pages[0]
+    current_page = test.pages[page_number - 1]
+    question = current_page.question
     images_list = []
     for image in current_page.image_list.split(', '):
-        # new_url = url_for('static', filename=image)
         images_list.append(image)
-        print(image)
     form.images.choices = images_list
+    if page_number == 1:
+        session['total_score'] = 0
     if form.validate_on_submit():
-        if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
-            return redirect('/test_succeed/' + str(id))
+        if page_number == len(test.pages):
+            score = session.get('total_score', 0)
+            if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
+                score = score + 10
+            return 'Вы прошли тест на ' + str(score) + ' баллов'
         else:
-            return render_template('test_form.html', form=form, message="Неправильный ответ, попробуй ещё раз")
-    return render_template('test_form.html', form=form)
+            if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
+                score = session.get('total_score', 0)
+                session['total_score'] = score + 10
+            return redirect('/first_tests/' + str(id) + '/' + str(page_number + 1))
+    return render_template('test_form.html', form=form, question=question)
+
+
+@app.route("/session_test/<int:id>")
+def session_test(id):
+    visits_count = session.get('visits_count', 0)
+    session['visits_count'] = visits_count + 1
+    return "Вы пришли на эту страницу " + str(visits_count) +  " раз"
+
+
+@app.route('/test_title/<int:id>')
+def test_title(id):
+    db_sess = db_session.create_session()
+    test = db_sess.query(Test).filter(Test.id == id).first()
+    return render_template('test_title.html', test=test)
 
 
 @app.route('/test_succeed/<int:id>')
