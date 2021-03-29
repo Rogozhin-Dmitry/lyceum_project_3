@@ -42,7 +42,7 @@ def main():
         image_list='/static/img/first_test/1/test4.jpg, /static/img/first_test/1/test5.jpg, /static/img/first_test/1/test6.jpg',
         right_image_number=2, question="Какая картинка лучше?")
     third_page = FirstTestPage(
-        image_list='/static/img/first_test/1/test7.png, /static/img/first_test/1/test5.png, /static/img/first_test/1/test6.png',
+        image_list='/static/img/first_test/1/test7.png, /static/img/first_test/1/test8.png, /static/img/first_test/1/test9.png',
         right_image_number=1, question="Какой каштан лучше?")
     first_test = FirstTest(title="something", language_id=1, creator=1, type='first_tests',
                            title_picture='/static/img/first_test/1/title.jpg')
