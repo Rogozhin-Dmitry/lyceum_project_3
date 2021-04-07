@@ -6,14 +6,16 @@ from data.tests_pages import FirstTestPage, SecondTestPage
 from forms.user import RegisterForm, LoginForm, ChangeForm
 from forms.tests_forms import FirstTestForm, SecondTestForm
 from forms.list_of_tests import TestForm
+from forms.create_tests_form import FirstTestCreateForm, PictureSlot, WordSlot, SecondTestCreateForm, TestCreateForm
 from data.tests import Test, FirstTest, SecondTest
 from flask_login import LoginManager
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+TEST_TYPES = ['first_tests', 'second_tests']
 
 
 @login_manager.user_loader
@@ -71,6 +73,7 @@ def main():
 
 @app.route("/")
 def index():
+    session['current_first_test_length'] = 2
     return render_template("index.html")
 
 
@@ -191,6 +194,140 @@ def test_succeed(id):
     db_sess = db_session.create_session()
     test = db_sess.query(FirstTest).filter(FirstTest.id == id).first()
     return render_template('test_succeed.html', test=test, score=score)
+
+
+@app.route('/second_test_create/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
+@app.route('/second_test_create/<int:test_id>', methods=['GET', 'POST'])
+def second_test_create(test_id, page_id=None):
+    form = SecondTestCreateForm()
+    if request.method == "GET":
+        if page_id is not None:
+            db_sess = db_session.create_session()
+            current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
+            session['current_first_test_length'] = len(current_page.words_list.split(', '))
+            while len(form.words.entries) != len(current_page.words_list.split(', ')):
+                form.words.append_entry(WordSlot())
+            count = 0
+            for word in form.words.entries:
+                word.slot.data = current_page.words_list.split(', ')[count]
+                count = count + 1
+            form.first_sentence.data = current_page.first_sentence
+            form.second_sentence.data = current_page.second_sentence
+            new_choices = [str(i + 1) for i in range(len(current_page.words_list.split(', ')))]
+            form.right_word_choosing.choices = new_choices
+        else:
+            current_length = session.get('current_first_test_length', 2)
+            new_choices = [str(i + 1) for i in range(current_length)]
+            form.right_word_choosing.choices = new_choices
+            print(form.words.entries)
+    if request.method == "POST":
+        print(request.form)
+        if 'right' in request.form:
+            current_length = session.get('current_first_test_length', 2)
+            if current_length < 5:
+                session['current_first_test_length'] = current_length + 1
+                current_length = session.get('current_first_test_length', 2)
+                print(current_length, 'from_right')
+                form.words.append_entry(WordSlot())
+                form.right_word_choosing.choices = [str(i + 1) for i in range(current_length)]
+        if 'left' in request.form:
+            current_length = session.get('current_first_test_length', 2)
+            if current_length > 2:
+                session['current_first_test_length'] = current_length - 1
+                current_length = session.get('current_first_test_length', 2)
+                del form.words.entries[-1]
+                form.right_word_choosing.choices = [str(i + 1) for i in range(current_length)]
+        elif 'submit' in request.form:
+            db_sess = db_session.create_session()
+            current_test = db_sess.query(SecondTest).filter(SecondTest.id == test_id).first()
+            words_list = []
+            for word in form.words.entries:
+                words_list.append(word.slot.data)
+            words_list = ', '.join(words_list)
+            if page_id is None:
+                new_page = SecondTestPage(first_sentence=form.first_sentence.data,
+                                          second_sentence=form.second_sentence.data, words_list=words_list,
+                                          right_word_number=int(form.right_word_choosing.data))
+                current_test.pages.append(new_page)
+                db_sess.add(new_page)
+            else:
+                new_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
+                print(type(new_page))
+                new_page.first_sentence = form.first_sentence.data
+                new_page.second_sentence = form.second_sentence.data
+                new_page.words_list = words_list
+                new_page.right_word_number = int(form.right_word_choosing.data)
+            db_sess.commit()
+            return redirect('/test_page_creation/' + str(test_id))
+    return render_template('second_test_create.html', form=form)
+
+
+@app.route('/create_test', methods=['GET', 'POST'])
+def test_create():
+    form = TestCreateForm()
+    db_sess = db_session.create_session()
+    categories = db_sess.query(Category).all()
+    used = []
+    for category in categories:
+        if category.name not in used:
+            used.append(category.name)
+    form.language.choices = used
+    form.type.choices = TEST_TYPES
+    if form.validate_on_submit():
+        language_id = db_sess.query(Category).filter(Category.name == form.language.data).first().id
+        if form.type.data == 'first_tests':
+            new_test = FirstTest(title=form.title.data, language_id=language_id, creator=current_user.id,
+                                 type='first_tests')
+        elif form.type.data == 'second_tests':
+            new_test = SecondTest(title=form.title.data, language_id=language_id, creator=current_user.id,
+                                  type='second_tests')
+        db_sess.add(new_test)
+        test_id = str(db_sess.query(Test).filter((Test.title == form.title.data),
+                                                 (Test.user == current_user)).first().id)
+        db_sess.commit()
+        return redirect('/test_page_creation/' + test_id)
+    return render_template('test_create.html', form=form)
+
+
+@app.route('/created_test_page/<int:user_id>', methods=['GET', 'POST'])
+def created_test_page(user_id):
+    db_sess = db_session.create_session()
+    tests = db_sess.query(Test).filter(Test.creator == user_id)
+    return render_template('created_test_page.html', tests=tests)
+
+
+@app.route('/delete_page/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
+def delete_page(test_id, page_id):
+    db_sess = db_session.create_session()
+    current_test = db_sess.query(Test).filter(Test.id == test_id).first()
+    if current_test.type == 'second_tests':
+        current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
+    elif current_test.type == 'first_tests':
+        current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
+    current_test.pages.remove(current_page)
+    db_sess.delete(current_page)
+    db_sess.commit()
+    return redirect('/test_page_creation/' + str(test_id))
+
+
+@app.route('/delete_test/<int:test_id>', methods=['GET', 'POST'])
+def delete_test(test_id):
+    db_sess = db_session.create_session()
+    current_test = db_sess.query(Test).filter(Test.id == test_id).first()
+    for page in current_test.pages:
+        current_test.pages.remove(page)
+        db_sess.delete(page)
+    db_sess.delete(current_test)
+    db_sess.commit()
+    return redirect('/created_test_page/' + str(current_user.id))
+
+
+@app.route('/test_page_creation/<int:id>')
+def test_page_creation(id):
+    db_sess = db_session.create_session()
+    current_test = db_sess.query(Test).filter(Test.id == id).first()
+    pages_list = current_test.pages
+    return render_template('test_page_creation.html', pages=pages_list, test=current_test)
 
 
 @app.route("/profile/<int:user_id>")

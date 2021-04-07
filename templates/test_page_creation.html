@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    {% block head %}{% endblock %}
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossorigin="anonymous">
+    <title>{{title}}</title>
+</head>
+<body>
+<nav>
+    <p>
+        {% for page in pages %}
+         <a class="btn btn-primary " href="/delete_page/{{test.id}}/{{page.id}}">Удалить страницу{{loop.index}}</a>
+         <a class="btn btn-primary " href="/second_test_create/{{test.id}}/{{page.id}}">Страница {{loop.index}}</a>
+        {% endfor %}
+         <a class="btn btn-primary " href="/second_test_create/{{test.id}}">Добавить страницу</a>
+    </p>
+</nav>
+</body>
+</html>
