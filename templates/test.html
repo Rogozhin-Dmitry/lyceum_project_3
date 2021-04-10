@@ -11,24 +11,25 @@
     <title>{{title}}</title>
 </head>
 <body>
-<form action="" method="post" class="item" enctype="multipart/form-data" novalidate>
-<h3>Выберите картинки</h3>
-        {{ form.hidden_tag() }}
+{% from '_formhelpers.html' import render_field %}
+<form form action="" method="post" class="item" enctype="multipart/form-data" novalidate>
 <p>
 {% for subfield in form.right_image_choosing %}
            {{subfield}} {{subfield.data}}
            {% endfor %}
 </p>
-<p>{{form.question()}}
-           {% for image in form.images %}
-      <p>
-      {{ image(onchange="this.form.submit()")}} {{ image.label }}
-    </p>
+<p>{{form.question()}}</p>
+<p>
+{% for image in form.images %}
+{{  image.hidden_tag() }}
+<img src="{{images[loop.index - 1]}}" alt="здесь должна была быть картинка, но не нашлась" style="width:200px;height:200px;">
+    {{ render_field(image.slot, required=true, size=32, onchange="this.form.submit()") }}
 {% endfor %}
-        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+</p>
+ <input type=submit name="over">
 <p>{{ form.left(type="submit", class="btn btn-primary") }}</p>
 <p>{{ form.right(type="submit", class="btn btn-primary") }}</p>
         <div>{{ message }}</div>
-    </form>
+</form>      
 </body>
 </html>

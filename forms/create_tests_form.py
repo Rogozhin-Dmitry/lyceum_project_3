@@ -13,7 +13,9 @@ class WordSlot(FlaskForm):
 
 
 class FirstTestCreateForm(FlaskForm):
-    images = FieldList(FormField(PictureSlot), min_entries=1)
+    right_image_choosing = RadioField()
+    question = StringField()
+    images = FieldList(FormField(PictureSlot), min_entries=2)
     right = SubmitField('Right')
     left = SubmitField('Left')
     submit = SubmitField('Submit')
@@ -36,4 +38,20 @@ class TestCreateForm(FlaskForm):
                        validators=[DataRequired()])
     language = SelectField('Язык',
                            validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+# class NewTestForm(FlaskForm):
+#     A = StringField('A', validators=[DataRequired()])
+#     B = StringField('B', validators=[DataRequired()])
+#     C = FileField('C', validators=[DataRequired()])
+#     submit = SubmitField('Submit')
+
+
+class NewTestForm(FlaskForm):
+    right_image_choosing = RadioField()
+    question = StringField()
+    images = FieldList(FormField(PictureSlot), min_entries=2)
+    right = SubmitField('Right')
+    left = SubmitField('Left')
     submit = SubmitField('Submit')

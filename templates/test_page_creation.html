@@ -15,9 +15,19 @@
     <p>
         {% for page in pages %}
          <a class="btn btn-primary " href="/delete_page/{{test.id}}/{{page.id}}">Удалить страницу{{loop.index}}</a>
+         {% if test.type == "first_tests" %}
+         <a class="btn btn-primary " href="/first_test_create/{{test.id}}/{{page.id}}">Страница {{loop.index}}</a>
+          {% endif %}
+         {% if test.type == "second_tests" %}
          <a class="btn btn-primary " href="/second_test_create/{{test.id}}/{{page.id}}">Страница {{loop.index}}</a>
+          {% endif %}
         {% endfor %}
+        {% if test.type == "first_tests" %}
+         <a class="btn btn-primary " href="/first_test_create/{{test.id}}">Добавить страницу</a>
+         {% endif %}
+        {% if test.type == "second_tests" %}
          <a class="btn btn-primary " href="/second_test_create/{{test.id}}">Добавить страницу</a>
+         {% endif %}
     </p>
 </nav>
 </body>
