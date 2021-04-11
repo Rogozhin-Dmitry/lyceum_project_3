@@ -15,7 +15,7 @@ import datetime
 from wtforms import FileField
 import shutil
 import os
-
+from extend_main_index_page import start_app
 app = Flask(__name__)
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
     days=365
@@ -24,6 +24,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 TEST_TYPES = ['first_tests', 'second_tests']
+start_app(app)
 
 
 @login_manager.user_loader
@@ -79,49 +80,17 @@ def main():
     db_sess.commit()
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     session['current_second_test_length'] = 2
     session['current_first_test_length'] = 2
     session['current_images_stack'] = []
+    if request.method == "POST":
+        print('XFGCH5YH5454')
     return render_template('index.html')
 
 
-@app.route('/js/plugins/waypoint/jquery.waypoints.min.js')
-def url_1():
-    url = url_for('static', filename='/js/plugins/waypoint/jquery.waypoints.min.js')[1:].replace('//', '/')
-    return open(url.replace('/', '\\')).read()
-
-
-@app.route('/js/plugins/swiper/js/swiper.min.js')
-def url_2():
-    url = url_for('static', filename='/js/plugins/swiper/js/swiper.min.js')[1:].replace('//', '/')
-    return open(url.replace('/', '\\')).read()
-
-
-@app.route('/js/plugins/ajaxchimp/jquery.ajaxchimp.min.js')
-def url_3():
-    url = url_for('static', filename='/js/plugins/ajaxchimp/jquery.ajaxchimp.min.js')[1:].replace('//', '/')
-    return open(url.replace('/', '\\')).read()
-
-
-@app.route('/js/plugins/matchHeight/jquery.matchHeight.min.js')
-def url_4():
-    url = url_for('static', filename='/js/plugins/matchHeight/jquery.matchHeight.min.js')[1:].replace('//', '/')
-    return open(url.replace('/', '\\')).read()
-
-
-@app.route('/js/plugins/waypoint/sticky.min.js')
-def url_5():
-    url = url_for('static', filename='/js/plugins/waypoint/sticky.min.js')[1:].replace('//', '/')
-    return open(url.replace('/', '\\')).read()
-
-
-@app.route('/js/plugins/scrollTo/jquery.scrollTo.min.js')
-def url_6():
-    url = url_for('static', filename='/js/plugins/scrollTo/jquery.scrollTo.min.js')[1:].replace('//', '/')
-    return open(url.replace('/', '\\')).read()
 
 
 @app.route("/tests_list", methods=['GET', 'POST'])
