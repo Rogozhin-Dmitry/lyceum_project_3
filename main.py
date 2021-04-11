@@ -78,6 +78,7 @@ def main():
     db_sess.add(third_test)
     db_sess.add(second_test)
     db_sess.commit()
+    app.run(port=5001, host='127.0.0.1')
 
 
 @app.route('/')
@@ -542,7 +543,7 @@ def login():
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout')
@@ -554,4 +555,3 @@ def logout():
 
 if __name__ == '__main__':
     main()
-    app.run(port=5001, host='127.0.0.1')
