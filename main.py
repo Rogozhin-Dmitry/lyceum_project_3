@@ -91,8 +91,6 @@ def index():
     return render_template('index.html')
 
 
-
-
 @app.route("/tests_list", methods=['GET', 'POST'])
 def test_list():
     form = TestForm()
