@@ -80,8 +80,8 @@ def main():
     db_sess.commit()
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+@app.route('/')
+@app.route('/index')
 def index():
     session['current_second_test_length'] = 2
     session['current_first_test_length'] = 2
@@ -89,6 +89,13 @@ def index():
     if request.method == "POST":
         print('XFGCH5YH5454')
     return render_template('index.html')
+
+
+@app.route('/email', methods=['GET', 'POST'])
+def email():
+    if request.method == 'POST':
+        print(request.form['EMAIL'])
+    return redirect('/')
 
 
 @app.route("/tests_list", methods=['GET', 'POST'])
