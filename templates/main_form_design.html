@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!--[if IE 9 ]>    <html lang="ru" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="ru" class="no-js">
+<!--<![endif]--><!-- head
+    ============================================================================ -->
+    <head>
+        <title>Easy Language</title>
+
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/icons/favicon.ico') }}">
+        <link rel="apple-touch-icon" sizes="57x57" href="//lpbuilder.pro/images/icons/apple-touch-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="//lpbuilder.pro/images/icons/apple-touch-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="//lpbuilder.pro/images/icons/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="//lpbuilder.pro/images/icons/apple-touch-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="//lpbuilder.pro/images/icons/apple-touch-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="//lpbuilder.pro/images/icons/apple-touch-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="//lpbuilder.pro/images/icons/apple-touch-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="//lpbuilder.pro/images/icons/apple-touch-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="//lpbuilder.pro/images/icons/apple-touch-icon-180x180.png">
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/vendor/bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='fonts/font-awesome/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/social-icons.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/swiper/css/swiper.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/mediaelement/css/mediaelementplayer.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/fancybox/jquery.fancybox.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/wow/css/animate.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+		<link id="changeable-colors" rel="stylesheet" href="{{ url_for('static', filename='css/css/red.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+
+        <script type="text/javascript" async="" src="https://mc.yandex.ru/metrika/watch.js"></script>
+        <script async="" src="https://mc.yandex.ru/metrika/tag.js"></script>
+        <script src="{{ url_for('static', filename='js/vendor/modernizr-custom.js') }}"></script>
+    </head>
+
+    <body class="nbs-10" data-spy="scroll" data-target=".header-menu-container" data-offset="61">
+        <div id="up-button"><a href="#" title="To Top"><i class="fa fa-angle-up"></i></a></div>
+
+        <div id="main-wrapper">
+            <header id="header-section-1" class="header-section header-style-1">
+                <div class="header-section-container">
+                    <div class="header-menu">
+                        <div class="header-menu" style="height: 80px;"><div class="header-menu" style="height: 80px;"><div class="header-menu" style="height: 80px;"><div class="header-menu-container header-menu-stuck">
+                            <nav class="navbar">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="navbar-header">
+                                                <a href="/" class="navbar-brand" title="Easy Language">
+                                                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Easy Language">
+                                                </a>
+                                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                                                    Menu <span><i class="lines"></i></span>
+                                                </button>
+                                            </div>
+                                            <div class="collapse navbar-collapse">
+                                                <ul class="nav navbar-nav navbar-right">
+                                                    <li>
+                                                        <a href="/" title="Главная">Главная</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/info" title="О нас">О нас</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/bye" title="Тарифы">Тарифы</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/bye" title="Курсы">Курсы</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/team" title="Команда">Команда</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/info" title="Контакты">Контакты</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="/profile" title="Profile" class="btn btn-lpbuilder wave-effect">Профиль</a>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </nav>
+
+
+                        </div></div></div></div><!-- /End Header Menu Container -->
+                    </div><!-- /End Header Menu -->
+
+
+                </div>
+            </header>
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>

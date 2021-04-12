@@ -36,48 +36,48 @@ def load_user(user_id):
 def main():
     db_session.global_init("db/site_data.db")
     db_sess = db_session.create_session()
-    db_sess.query(User).delete()
-    db_sess.query(Category).delete()
-    db_sess.query(Test).delete()
-    db_sess.query(FirstTest).delete()
-    db_sess.query(SecondTest).delete()
-    db_sess.query(FirstTestPage).delete()
-    random_user = User(name="Eshly", surname="Dark", status="student", email="alpusik2000004@gmail.com")
-    first_language = Category(name="English")
-    second_language = Category(name="Japanese")
-    random_user.set_password("Pokepark2")
-    some_page = FirstTestPage(
-        image_list='/static/img/first_test/1/test1.jpg, /static/img/first_test/1/test2.jpg, /static/img/first_test/1/test3.jpg',
-        right_image_number=1, question="Какая фапута лучше?")
-    second_page = FirstTestPage(
-        image_list='/static/img/first_test/1/test4.jpg, /static/img/first_test/1/test5.jpg, /static/img/first_test/1/test6.jpg',
-        right_image_number=2, question="Какая картинка лучше?")
-    third_page = FirstTestPage(
-        image_list='/static/img/first_test/1/test7.png, /static/img/first_test/1/test8.png, /static/img/first_test/1/test9.png',
-        right_image_number=1, question="Какой каштан лучше?")
-    first_test = FirstTest(title="something", language_id=1, creator=1, type='first_tests',
-                           title_picture='/static/img/first_test/1/title.jpg')
-    second_test = FirstTest(title="something2", language_id=2, creator=1, type='first_tests')
-    second_page1 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
-                                  right_word_number=2)
-    second_page2 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
-                                  right_word_number=2)
-    third_test = SecondTest(title="something3", language_id=2, creator=1, type='second_tests')
-    second_page3 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
-                                  right_word_number=2)
-    first_test.pages.append(some_page)
-    first_test.pages.append(second_page)
-    first_test.pages.append(third_page)
-    third_test.pages.append(second_page1)
-    third_test.pages.append(second_page2)
-    third_test.pages.append(second_page3)
-    db_sess.add(random_user)
-    db_sess.add(first_test)
-    db_sess.add(first_language)
-    db_sess.add(second_language)
-    db_sess.add(third_test)
-    db_sess.add(second_test)
-    db_sess.commit()
+    # db_sess.query(User).delete()
+    # db_sess.query(Category).delete()
+    # db_sess.query(Test).delete()
+    # db_sess.query(FirstTest).delete()
+    # db_sess.query(SecondTest).delete()
+    # db_sess.query(FirstTestPage).delete()
+    # # random_user = User(name="Eshly", surname="Dark", status="student", email="alpusik2000004@gmail.com")
+    # first_language = Category(name="English")
+    # second_language = Category(name="Japanese")
+    # random_user.set_password("Pokepark2")
+    # some_page = FirstTestPage(
+    #     image_list='/static/img/first_test/1/test1.jpg, /static/img/first_test/1/test2.jpg, /static/img/first_test/1/test3.jpg',
+    #     right_image_number=1, question="Какая фапута лучше?")
+    # second_page = FirstTestPage(
+    #     image_list='/static/img/first_test/1/test4.jpg, /static/img/first_test/1/test5.jpg, /static/img/first_test/1/test6.jpg',
+    #     right_image_number=2, question="Какая картинка лучше?")
+    # third_page = FirstTestPage(
+    #     image_list='/static/img/first_test/1/test7.png, /static/img/first_test/1/test8.png, /static/img/first_test/1/test9.png',
+    #     right_image_number=1, question="Какой каштан лучше?")
+    # first_test = FirstTest(title="something", language_id=1, creator=1, type='first_tests',
+    #                        title_picture='/static/img/first_test/1/title.jpg')
+    # second_test = FirstTest(title="something2", language_id=2, creator=1, type='first_tests')
+    # second_page1 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
+    #                               right_word_number=2)
+    # second_page2 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
+    #                               right_word_number=2)
+    # third_test = SecondTest(title="something3", language_id=2, creator=1, type='second_tests')
+    # second_page3 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
+    #                               right_word_number=2)
+    # first_test.pages.append(some_page)
+    # first_test.pages.append(second_page)
+    # first_test.pages.append(third_page)
+    # third_test.pages.append(second_page1)
+    # third_test.pages.append(second_page2)
+    # third_test.pages.append(second_page3)
+    # db_sess.add(random_user)
+    # db_sess.add(first_test)
+    # db_sess.add(first_language)
+    # db_sess.add(second_language)
+    # db_sess.add(third_test)
+    # db_sess.add(second_test)
+    # db_sess.commit()
     app.run(port=5001, host='127.0.0.1')
 
 
@@ -490,15 +490,14 @@ def test_page_creation(id):
     return render_template('test_page_creation.html', pages=pages_list, test=current_test)
 
 
-@app.route("/profile/<int:user_id>")
-def profile(user_id):
-    db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == user_id).first()
-    name = user.name
-    surname = user.surname
-    status = user.status
-    email = user.email
-    return render_template("profile.html", name=name, surname=surname, status=status, email=email)
+@app.route("/profile")
+def profile():
+    if current_user.is_authenticated:
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+        return render_template("profile.html", user_data=user)
+    else:
+        return redirect("/login")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -527,7 +526,7 @@ def reqister():
         db_sess.commit()
         if not os.path.exists('static/img/users/' + str(current_user.id)):
             os.mkdir('static/img/users/' + str(current_user.id))
-        return redirect('/login')
+        return redirect('/profile')
     return render_template('register.html', title='Регистрация', form=form)
 
 
@@ -539,7 +538,7 @@ def login():
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/")
+            return redirect("/profile")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)

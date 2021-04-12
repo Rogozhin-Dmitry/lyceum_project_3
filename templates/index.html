@@ -1,479 +1,378 @@
-<!DOCTYPE html>
-<!--[if IE 9 ]>    <html lang="ru" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="ru" class="no-js">
-    <head>
-        <title>Easy Language</title>
+{% extends "main_form_design.html" %}
 
-        <meta charset="utf-8">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+{% block content %}
+    <div id="hero-section-3" class="hero-section white-section section-no-padding border-bottom">
+    <div class="section-container">
+        <div class="lpbuilder-swiper-slider swiper-container-horizontal" data-swiper-items="1">
+            <div class="swiper-wrapper" style="transition-duration: 0ms; transform: translate3d(-1600px, 0px, 0px);"><div class="swiper-slide swiper-slide-duplicate swiper-slide-prev" style="width: 1600px;" data-swiper-slide-index="1">
+                    <div class="swiper-slide-container">
+                        <div class="white-section section-lg-padding border-bottom">
+                            <div class="section-container">
 
-        <link rel="shortcut icon" href="{{ url_for('static', filename='images/icons/favicon.ico') }}">
-        <link rel="apple-touch-icon" sizes="57x57" href="//lpbuilder.pro/images/icons/apple-touch-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="//lpbuilder.pro/images/icons/apple-touch-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="//lpbuilder.pro/images/icons/apple-touch-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="//lpbuilder.pro/images/icons/apple-touch-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="//lpbuilder.pro/images/icons/apple-touch-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="//lpbuilder.pro/images/icons/apple-touch-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="//lpbuilder.pro/images/icons/apple-touch-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="//lpbuilder.pro/images/icons/apple-touch-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="//lpbuilder.pro/images/icons/apple-touch-icon-180x180.png">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/vendor/bootstrap/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='fonts/font-awesome/css/font-awesome.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/social-icons.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/swiper/css/swiper.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/mediaelement/css/mediaelementplayer.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/fancybox/jquery.fancybox.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/wow/css/animate.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-		<link id="changeable-colors" rel="stylesheet" href="{{ url_for('static', filename='css/css/red.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
 
-        <script type="text/javascript" async="" src="https://mc.yandex.ru/metrika/watch.js"></script>
-        <script async="" src="https://mc.yandex.ru/metrika/tag.js"></script>
-        <script src="{{ url_for('static', filename='js/vendor/modernizr-custom.js') }}"></script>
-    </head>
+                                <!-- Background Image Block -->
+                                <div class="background-image-block parallax-effect lpbuilder-image">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-002-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: 0px; transform: translate(-50%, 0px);">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-002.jpg') }}" alt="Parallax Image" style="top: 0px; transform: translate(-50%, 0px);">
+                                </div><!-- /End Background Image Block -->
 
-    <body class="nbs-10" data-spy="scroll" data-target=".header-menu-container" data-offset="61">
-        <div id="up-button"><a href="#" title="To Top"><i class="fa fa-angle-up"></i></a></div>
 
-        <div id="main-wrapper">
-            <header id="header-section-1" class="header-section header-style-1">
-                <div class="header-section-container">
-                    <div class="header-menu">
-                        <div class="header-menu" style="height: 80px;"><div class="header-menu" style="height: 80px;"><div class="header-menu" style="height: 80px;"><div class="header-menu-container header-menu-stuck">
-                            <nav class="navbar">
+                                <!-- container -->
                                 <div class="container">
+                                    <!-- row -->
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="navbar-header">
-                                                <a href="/" class="navbar-brand" title="Easy Language">
-                                                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Easy Language">
-                                                </a>
-                                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                                                    Menu <span><i class="lines"></i></span>
-                                                </button>
-                                            </div>
-                                            <div class="collapse navbar-collapse">
-                                                <ul class="nav navbar-nav navbar-right">
-                                                    <li>
-                                                        <a href="/" title="Главная">Главная</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/info" title="О нас">О нас</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/bye" title="Тарифы">Тарифы</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/bye" title="Курсы">Курсы</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/team" title="Команда">Команда</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/info" title="Контакты">Контакты</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/login" title="Purchase" class="btn btn-lpbuilder wave-effect">Профиль</a>
-                                                    </li>
 
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </nav>
+                                        <!-- Title Block -->
+                                        <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
+                                            <!-- Title Block Container -->
+                                            <div class="title-block-container white-content remove-white-content text-center">
 
+                                                <!-- Title -->
+                                                <h1>Easy Language</h1>
 
-                        </div></div></div></div><!-- /End Header Menu Container -->
-                    </div><!-- /End Header Menu -->
+                                                <!-- Description -->
+                                                <p>Самый мощный инструмент для изучения языков</p>
+
+                                            </div><!-- /End Title Block Container -->
+                                                                                                    <!-- Form Block Container -->
+                                            <div class="form-block-container white-content remove-white-content text-center">
+                                                <form method="post" action="/email">
+
+                                                    <!-- Email -->
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <input type="email" class="form-control subscribe-email" name="EMAIL">
+                                                            <label>Email address</label>
+                                                        </div>
+                                                    </div><!-- /End Email -->
+
+                                                    <!-- Submit Button -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-lpbuilder wave-effect">ПОДПИСАТЬСЯ</button>
+                                                        </div>
+                                                    </div><!-- /End Submit Button -->
+
+                                                </form>
+                                            </div><!-- /End Form Block Container-->
+                                        </div><!-- /End Title Block -->
+
+                                    </div><!-- /End row -->
+                                </div><!-- /End container -->
 
 
+                            </div><!-- /End Section Container -->
+                        </div><!-- /End White Section -->
+
+
+                    </div><!-- /End Slide Container -->
                 </div>
-            </header>
 
-            <div id="hero-section-3" class="hero-section white-section section-no-padding border-bottom">
-                <div class="section-container">
-                    <div class="lpbuilder-swiper-slider swiper-container-horizontal" data-swiper-items="1">
-                        <div class="swiper-wrapper" style="transition-duration: 0ms; transform: translate3d(-1600px, 0px, 0px);"><div class="swiper-slide swiper-slide-duplicate swiper-slide-prev" style="width: 1600px;" data-swiper-slide-index="1">
-                                <!-- Slide Container -->
-                                <div class="swiper-slide-container">
 
+                <!-- Slide -->
+                <div class="swiper-slide swiper-slide-active" style="width: 1600px;" data-swiper-slide-index="0">
+                    <!-- Slide Container -->
+                    <div class="swiper-slide-container">
 
-                                    <!-- White Section -->
-                                    <div class="white-section section-lg-padding border-bottom">
-                                        <!-- Section Container -->
-                                        <div class="section-container">
 
+                        <!-- White Section -->
+                        <div class="white-section section-lg-padding border-bottom">
+                            <!-- Section Container -->
+                            <div class="section-container">
 
-                                            <!-- Background Image Block -->
-                                            <div class="background-image-block parallax-effect lpbuilder-image">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-002-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: 0px; transform: translate(-50%, 0px);">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-002.jpg') }}" alt="Parallax Image" style="top: 0px; transform: translate(-50%, 0px);">
-                                            </div><!-- /End Background Image Block -->
 
+                                <!-- Background Image Block -->
+                                <div class="background-image-block parallax-effect lpbuilder-image">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-001-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: -175px; transform: translate(-50%, 0px);">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-001.jpg') }}" alt="Parallax Image" style="top: -175px; transform: translate(-50%, 0px);">
+                                </div><!-- /End Background Image Block -->
 
-                                            <!-- container -->
-                                            <div class="container">
-                                                <!-- row -->
-                                                <div class="row">
 
-                                                    <!-- Title Block -->
-                                                    <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
-                                                        <!-- Title Block Container -->
-                                                        <div class="title-block-container white-content remove-white-content text-center">
+                                <!-- container -->
+                                <div class="container">
+                                    <!-- row -->
+                                    <div class="row">
 
-                                                            <!-- Title -->
-                                                            <h1>Easy Language</h1>
 
-                                                            <!-- Description -->
-                                                            <p>Самый мощный инструмент для изучения языков</p>
+                                        <!-- Title Block -->
+                                        <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
+                                            <!-- Title Block Container -->
+                                            <div class="title-block-container white-content remove-white-content text-center">
 
-                                                        </div><!-- /End Title Block Container -->
-                                                                                                                <!-- Form Block Container -->
-                                                        <div class="form-block-container white-content remove-white-content text-center">
-                                                            <form method="post" action="/email">
+                                                <!-- Title -->
+                                                <h1>Easy Language</h1>
 
-                                                                <!-- Email -->
-                                                                <div class="col-md-8">
-                                                                    <div class="form-group">
-                                                                        <input type="email" class="form-control subscribe-email" name="EMAIL">
-                                                                        <label>Email address</label>
-                                                                    </div>
-                                                                </div><!-- /End Email -->
+                                                <!-- Description -->
+                                                <p>Самый мощный инструмент для изучения языков!</p>
 
-                                                                <!-- Submit Button -->
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <button type="submit" class="btn btn-lpbuilder wave-effect">ПОДПИСАТЬСЯ</button>
-                                                                    </div>
-                                                                </div><!-- /End Submit Button -->
+                                                <!-- Buttons -->
+                                                <a href="info/" title="Read More" class="btn btn-lpbuilder wave-effect">ПОДРОБНЕЕ</a>
+                                                <a href="bye/" title="Purchase Now" class="btn btn-lpbuilder-white wave-effect">ЗАПИСАТЬСЯ</a>
 
-                                                            </form>
-                                                        </div><!-- /End Form Block Container-->
-                                                    </div><!-- /End Title Block -->
+                                            </div><!-- /End Title Block Container -->
+                                        </div><!-- /End Title Block -->
 
-                                                </div><!-- /End row -->
-                                            </div><!-- /End container -->
 
+                                    </div><!-- /End row -->
+                                </div><!-- /End container -->
 
-                                        </div><!-- /End Section Container -->
-                                    </div><!-- /End White Section -->
 
+                            </div><!-- /End Section Container -->
+                        </div><!-- /End White Section -->
 
-                                </div><!-- /End Slide Container -->
-                            </div>
 
+                    </div><!-- /End Slide Container -->
+                </div><!-- /End Slide -->
 
-                            <!-- Slide -->
-                            <div class="swiper-slide swiper-slide-active" style="width: 1600px;" data-swiper-slide-index="0">
-                                <!-- Slide Container -->
-                                <div class="swiper-slide-container">
 
+                <!-- Slide -->
+                <div class="swiper-slide swiper-slide-next" style="width: 1600px;" data-swiper-slide-index="1">
+                    <!-- Slide Container -->
+                    <div class="swiper-slide-container">
 
-                                    <!-- White Section -->
-                                    <div class="white-section section-lg-padding border-bottom">
-                                        <!-- Section Container -->
-                                        <div class="section-container">
 
+                        <!-- White Section -->
+                        <div class="white-section section-lg-padding border-bottom">
+                            <!-- Section Container -->
+                            <div class="section-container">
 
-                                            <!-- Background Image Block -->
-                                            <div class="background-image-block parallax-effect lpbuilder-image">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-001-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: -175px; transform: translate(-50%, 0px);">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-001.jpg') }}" alt="Parallax Image" style="top: -175px; transform: translate(-50%, 0px);">
-                                            </div><!-- /End Background Image Block -->
 
+                                <!-- Background Image Block -->
+                                <div class="background-image-block parallax-effect lpbuilder-image">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-002-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: 0px; transform: translate(-50%, 0px);">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-002.jpg') }}" alt="Parallax Image" style="top: 0px; transform: translate(-50%, 0px);">
+                                </div><!-- /End Background Image Block -->
 
-                                            <!-- container -->
-                                            <div class="container">
-                                                <!-- row -->
-                                                <div class="row">
 
+                                <!-- container -->
+                                <div class="container">
+                                    <!-- row -->
+                                    <div class="row">
+                                        <!-- Title Block -->
+                                        <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
+                                            <!-- Title Block Container -->
+                                            <div class="title-block-container white-content remove-white-content text-center">
 
-                                                    <!-- Title Block -->
-                                                    <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
-                                                        <!-- Title Block Container -->
-                                                        <div class="title-block-container white-content remove-white-content text-center">
+                                                <!-- Title -->
+                                                <h1>Easy Language</h1>
 
-                                                            <!-- Title -->
-                                                            <h1>Easy Language</h1>
+                                                <!-- Description -->
+                                                <p>Самый мощный инструмент для изучения языков</p>
 
-                                                            <!-- Description -->
-                                                            <p>Самый мощный инструмент для изучения языков!</p>
+                                            </div><!-- /End Title Block Container -->
+                                                                                                    <!-- Form Block Container -->
+                                            <div class="form-block-container white-content remove-white-content text-center">
+                                                <form method="post" action="/email">
 
-                                                            <!-- Buttons -->
-                                                            <a href="info/" title="Read More" class="btn btn-lpbuilder wave-effect">ПОДРОБНЕЕ</a>
-                                                            <a href="bye/" title="Purchase Now" class="btn btn-lpbuilder-white wave-effect">ЗАПИСАТЬСЯ</a>
+                                                    <!-- Email -->
+                                                    <div class="col-md-8">
+                                                        <div class="form-group">
+                                                            <input type="email" class="form-control subscribe-email" name="EMAIL">
+                                                            <label>Email address</label>
+                                                        </div>
+                                                    </div><!-- /End Email -->
 
-                                                        </div><!-- /End Title Block Container -->
-                                                    </div><!-- /End Title Block -->
+                                                    <!-- Submit Button -->
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-lpbuilder wave-effect">ПОДПИСАТЬСЯ</button>
+                                                        </div>
+                                                    </div><!-- /End Submit Button -->
 
+                                                </form>
+                                            </div><!-- /End Form Block Container-->
+                                        </div><!-- /End Title Block -->
 
-                                                </div><!-- /End row -->
-                                            </div><!-- /End container -->
 
+                                    </div><!-- /End row -->
+                                </div><!-- /End container -->
 
-                                        </div><!-- /End Section Container -->
-                                    </div><!-- /End White Section -->
 
+                            </div><!-- /End Section Container -->
+                        </div><!-- /End White Section -->
 
-                                </div><!-- /End Slide Container -->
-                            </div><!-- /End Slide -->
 
+                    </div><!-- /End Slide Container -->
+                </div><!-- /End Slide -->
 
-                            <!-- Slide -->
-                            <div class="swiper-slide swiper-slide-next" style="width: 1600px;" data-swiper-slide-index="1">
-                                <!-- Slide Container -->
-                                <div class="swiper-slide-container">
 
+            <div class="swiper-slide swiper-slide-duplicate" style="width: 1600px;" data-swiper-slide-index="0">
+                    <!-- Slide Container -->
+                    <div class="swiper-slide-container">
 
-                                    <!-- White Section -->
-                                    <div class="white-section section-lg-padding border-bottom">
-                                        <!-- Section Container -->
-                                        <div class="section-container">
 
+                        <!-- White Section -->
+                        <div class="white-section section-lg-padding border-bottom">
+                            <!-- Section Container -->
+                            <div class="section-container">
 
-                                            <!-- Background Image Block -->
-                                            <div class="background-image-block parallax-effect lpbuilder-image">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-002-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: 0px; transform: translate(-50%, 0px);">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-002.jpg') }}" alt="Parallax Image" style="top: 0px; transform: translate(-50%, 0px);">
-                                            </div><!-- /End Background Image Block -->
 
+                                <!-- Background Image Block -->
+                                <div class="background-image-block parallax-effect lpbuilder-image">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-001-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: -175px; transform: translate(-50%, 0px);">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-001.jpg') }}" alt="Parallax Image" style="top: -175px; transform: translate(-50%, 0px);">
+                                </div><!-- /End Background Image Block -->
 
-                                            <!-- container -->
-                                            <div class="container">
-                                                <!-- row -->
-                                                <div class="row">
-                                                    <!-- Title Block -->
-                                                    <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
-                                                        <!-- Title Block Container -->
-                                                        <div class="title-block-container white-content remove-white-content text-center">
 
-                                                            <!-- Title -->
-                                                            <h1>Easy Language</h1>
+                                <!-- container -->
+                                <div class="container">
+                                    <!-- row -->
+                                    <div class="row">
 
-                                                            <!-- Description -->
-                                                            <p>Самый мощный инструмент для изучения языков</p>
 
-                                                        </div><!-- /End Title Block Container -->
-                                                                                                                <!-- Form Block Container -->
-                                                        <div class="form-block-container white-content remove-white-content text-center">
-                                                            <form method="post" action="/email">
+                                        <!-- Title Block -->
+                                        <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
+                                            <!-- Title Block Container -->
+                                            <div class="title-block-container white-content remove-white-content text-center">
 
-                                                                <!-- Email -->
-                                                                <div class="col-md-8">
-                                                                    <div class="form-group">
-                                                                        <input type="email" class="form-control subscribe-email" name="EMAIL">
-                                                                        <label>Email address</label>
-                                                                    </div>
-                                                                </div><!-- /End Email -->
+                                                <!-- Title -->
+                                                <h1>LangOLab</h1>
 
-                                                                <!-- Submit Button -->
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <button type="submit" class="btn btn-lpbuilder wave-effect">ПОДПИСАТЬСЯ</button>
-                                                                    </div>
-                                                                </div><!-- /End Submit Button -->
+                                                <!-- Description -->
+                                                <p>Самый мощный инструмент для изучения языков!</p>
 
-                                                            </form>
-                                                        </div><!-- /End Form Block Container-->
-                                                    </div><!-- /End Title Block -->
+                                                <!-- Buttons -->
+                                                <a href="/info" title="Read More" class="btn btn-lpbuilder wave-effect">ПОДРОБНЕЕ</a>
+                                                <a href="/" title="Purchase Now" class="btn btn-lpbuilder-white wave-effect">ЗАПИСАТЬСЯ</a>
 
+                                            </div><!-- /End Title Block Container -->
+                                        </div><!-- /End Title Block -->
 
-                                                </div><!-- /End row -->
-                                            </div><!-- /End container -->
 
+                                    </div><!-- /End row -->
+                                </div><!-- /End container -->
 
-                                        </div><!-- /End Section Container -->
-                                    </div><!-- /End White Section -->
 
+                            </div><!-- /End Section Container -->
+                        </div><!-- /End White Section -->
 
-                                </div><!-- /End Slide Container -->
-                            </div><!-- /End Slide -->
 
+                    </div><!-- /End Slide Container -->
+                </div></div><!-- /End Swiper Slides -->
 
-                        <div class="swiper-slide swiper-slide-duplicate" style="width: 1600px;" data-swiper-slide-index="0">
-                                <!-- Slide Container -->
-                                <div class="swiper-slide-container">
+            <!-- Pagination -->
+            <div class="swiper-pagination swiper-pagination-clickable"><span class="swiper-pagination-bullet swiper-pagination-bullet-active"></span><span class="swiper-pagination-bullet"></span></div>
 
+            <!-- Prev Navigation Buttons -->
+            <div class="swiper-button-prev">
+                <i class="fa fa-angle-left"></i>
+            </div><!-- /End Prev Navigation Buttons -->
 
-                                    <!-- White Section -->
-                                    <div class="white-section section-lg-padding border-bottom">
-                                        <!-- Section Container -->
-                                        <div class="section-container">
+            <!-- Next Navigation Buttons -->
+            <div class="swiper-button-next">
+                <i class="fa fa-angle-right"></i>
+            </div><!-- /End Next Navigation Buttons -->
 
+        </div><!-- /End Swiper Slider -->
 
-                                            <!-- Background Image Block -->
-                                            <div class="background-image-block parallax-effect lpbuilder-image">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-001-1.jpg') }}" alt="Parallax Image" class="mobile-image" style="top: -175px; transform: translate(-50%, 0px);">
-                                                <img src="{{ url_for('static', filename='images/hero/hero-001.jpg') }}" alt="Parallax Image" style="top: -175px; transform: translate(-50%, 0px);">
-                                            </div><!-- /End Background Image Block -->
 
+    </div><!-- /End Section Container -->
+    </div>
+    <!-- Content 1 ==================================================================== -->
+    <div id="content-section-1" class="content-section white-section">
+    <!-- Section Container -->
+    <div class="section-container">
 
-                                            <!-- container -->
-                                            <div class="container">
-                                                <!-- row -->
-                                                <div class="row">
 
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
 
-                                                    <!-- Title Block -->
-                                                    <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
-                                                        <!-- Title Block Container -->
-                                                        <div class="title-block-container white-content remove-white-content text-center">
 
-                                                            <!-- Title -->
-                                                            <h1>LangOLab</h1>
+                <!-- Title Block -->
+                <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
+                    <!-- Title Block Container -->
+                    <div class="title-block-container text-center">
 
-                                                            <!-- Description -->
-                                                            <p>Самый мощный инструмент для изучения языков!</p>
+                        <!-- Title -->
+                        <h2>ЧТО МЫ ТАКОЕ?</h2>
 
-                                                            <!-- Buttons -->
-                                                            <a href="/info" title="Read More" class="btn btn-lpbuilder wave-effect">ПОДРОБНЕЕ</a>
-                                                            <a href="/" title="Purchase Now" class="btn btn-lpbuilder-white wave-effect">ЗАПИСАТЬСЯ</a>
+                        <!-- Description -->
+                        <p>Мы - ваша путевка в мир английского и японского языков. В игровой форме мы поможем вам изучить базовые, а в будущем и не только, вещи в непонятных для вас областях иностранных языков.</p>
 
-                                                        </div><!-- /End Title Block Container -->
-                                                    </div><!-- /End Title Block -->
+                        <!-- Line Separator -->
+                        <div class="line-separator"></div>
 
+                    </div><!-- /End Title Block Container -->
+                </div><!-- /End Title Block -->
 
-                                                </div><!-- /End row -->
-                                            </div><!-- /End container -->
 
+                <!-- Content Block -->
+                <div class="col-md-4 content-block">
+                    <!-- Content Block Container -->
+                    <div class="content-block-container" style="height: 200px;">
 
-                                        </div><!-- /End Section Container -->
-                                    </div><!-- /End White Section -->
+                        <!-- Icon -->
+                        <i class="fa fa-diamond circle-icon-block circle-icon-block-lg"></i>
 
+                        <!-- Title -->
+                        <h4>Твердость</h4>
 
-                                </div><!-- /End Slide Container -->
-                            </div></div><!-- /End Swiper Slides -->
+                        <!-- Description -->
+                        <p>Все наши курсы создадут у вас четкое понимание того, что иностранные языки - просто!</p>
 
-                        <!-- Pagination -->
-                        <div class="swiper-pagination swiper-pagination-clickable"><span class="swiper-pagination-bullet swiper-pagination-bullet-active"></span><span class="swiper-pagination-bullet"></span></div>
+                    </div><!-- /End Content Block Container -->
+                </div><!-- /End Content Block -->
 
-                        <!-- Prev Navigation Buttons -->
-                        <div class="swiper-button-prev">
-                            <i class="fa fa-angle-left"></i>
-                        </div><!-- /End Prev Navigation Buttons -->
 
-                        <!-- Next Navigation Buttons -->
-                        <div class="swiper-button-next">
-                            <i class="fa fa-angle-right"></i>
-                        </div><!-- /End Next Navigation Buttons -->
+                <!-- Content Block -->
+                <div class="col-md-4 content-block">
+                    <!-- Content Block Container -->
+                    <div class="content-block-container" style="height: 200px;">
 
-                    </div><!-- /End Swiper Slider -->
+                        <!-- Icon -->
+                        <i class="fa fa-code circle-icon-block circle-icon-block-lg"></i>
 
+                        <!-- Title -->
+                        <h4>Укрепление</h4>
 
-                </div><!-- /End Section Container -->
-            </div><!-- /End Hero 3 --><!-- Content 1
-            ==================================================================== -->
-            <div id="content-section-1" class="content-section white-section">
-                <!-- Section Container -->
-                <div class="section-container">
+                        <!-- Description -->
+                        <p>Даже если вы уже что-то знаете, вам будет очень полезно отточить свои знания на нашем сайте!</p>
 
+                    </div><!-- /End Content Block Container -->
+                </div><!-- /End Content Block -->
 
-                    <!-- container -->
-                    <div class="container">
-                        <!-- row -->
-                        <div class="row">
 
+                <!-- Content Block -->
+                <div class="col-md-4 content-block">
+                    <!-- Content Block Container -->
+                    <div class="content-block-container" style="height: 200px;">
 
-                            <!-- Title Block -->
-                            <div class="col-lg-10 col-lg-offset-1 col-md-12 title-block">
-                                <!-- Title Block Container -->
-                                <div class="title-block-container text-center">
+                        <!-- Icon -->
+                        <i class="fa fa-bar-chart circle-icon-block circle-icon-block-lg"></i>
 
-                                    <!-- Title -->
-                                    <h2>ЧТО МЫ ТАКОЕ?</h2>
+                        <!-- Title -->
+                        <h4>Аналитика</h4>
 
-                                    <!-- Description -->
-                                    <p>Мы - ваша путевка в мир английского и японского языков. В игровой форме мы поможем вам изучить базовые, а в будущем и не только, вещи в непонятных для вас областях иностранных языков.</p>
+                        <!-- Description -->
+                        <p>С помощью удобного профиля вы всегда сможете посмотреть, насколько сильно вы продвинулись за последнее время!</p>
 
-                                    <!-- Line Separator -->
-                                    <div class="line-separator"></div>
+                    </div><!-- /End Content Block Container -->
+                </div><!-- /End Content Block -->
 
-                                </div><!-- /End Title Block Container -->
-                            </div><!-- /End Title Block -->
 
+            </div><!-- /End row -->
+        </div><!-- /End container -->
 
-                            <!-- Content Block -->
-                            <div class="col-md-4 content-block">
-                                <!-- Content Block Container -->
-                                <div class="content-block-container" style="height: 200px;">
 
-                                    <!-- Icon -->
-                                    <i class="fa fa-diamond circle-icon-block circle-icon-block-lg"></i>
+    </div><!-- /End Section Container -->
+    </div>
 
-                                    <!-- Title -->
-                                    <h4>Твердость</h4>
 
-                                    <!-- Description -->
-                                    <p>Все наши курсы создадут у вас четкое понимание того, что иностранные языки - просто!</p>
-
-                                </div><!-- /End Content Block Container -->
-                            </div><!-- /End Content Block -->
-
-
-                            <!-- Content Block -->
-                            <div class="col-md-4 content-block">
-                                <!-- Content Block Container -->
-                                <div class="content-block-container" style="height: 200px;">
-
-                                    <!-- Icon -->
-                                    <i class="fa fa-code circle-icon-block circle-icon-block-lg"></i>
-
-                                    <!-- Title -->
-                                    <h4>Укрепление</h4>
-
-                                    <!-- Description -->
-                                    <p>Даже если вы уже что-то знаете, вам будет очень полезно отточить свои знания на нашем сайте!</p>
-
-                                </div><!-- /End Content Block Container -->
-                            </div><!-- /End Content Block -->
-
-
-                            <!-- Content Block -->
-                            <div class="col-md-4 content-block">
-                                <!-- Content Block Container -->
-                                <div class="content-block-container" style="height: 200px;">
-
-                                    <!-- Icon -->
-                                    <i class="fa fa-bar-chart circle-icon-block circle-icon-block-lg"></i>
-
-                                    <!-- Title -->
-                                    <h4>Аналитика</h4>
-
-                                    <!-- Description -->
-                                    <p>С помощью удобного профиля вы всегда сможете посмотреть, насколько сильно вы продвинулись за последнее время!</p>
-
-                                </div><!-- /End Content Block Container -->
-                            </div><!-- /End Content Block -->
-
-
-                        </div><!-- /End row -->
-                    </div><!-- /End container -->
-
-
-                </div><!-- /End Section Container -->
-            </div><!-- /End Content 1 --></div><!-- /End Main Wrapper -->
-
-
-
-
-        <!-- Java Script Files
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        ======================================================================== -->
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/mobile/mobile.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-		<script type="text/javascript" src="https://lpbuilder.pro/js/app.js"></script>
-		<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-155226992-1"></script>
-
-<style>		
-#style-switcher {
+    <!-- Java Script Files
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    ======================================================================== -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/mobile/mobile.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script type="text/javascript" src="https://lpbuilder.pro/js/app.js"></script>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-155226992-1"></script>
+    <style>
+    #style-switcher {
     z-index: 9999;
     position: fixed;
     top: 100px;
@@ -488,24 +387,24 @@
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     transition: all 0.5s;
-}
+    }
 
-.close-style-switcher {
+    .close-style-switcher {
     left: -212px;
-}
+    }
 
-.open-style-switcher {
+    .open-style-switcher {
     left: -1px;
-}
+    }
 
-#style-switcher .segment {
+    #style-switcher .segment {
     width: 100%;
     padding: 15px 10px 15px 0;
     padding: 15px 25px;
 
-}
+    }
 
-#style-switcher a.panel-button {
+    #style-switcher a.panel-button {
     position: absolute;
     top: 30px;
     right: -50px;
@@ -519,13 +418,13 @@
     line-height: 47px;
     background: white;
     cursor: pointer;
-}
+    }
 
-#style-switcher h3 {
+    #style-switcher h3 {
     margin: 0;
-}
+    }
 
-#style-switcher .segment a.switcher {
+    #style-switcher .segment a.switcher {
     display: inline-block;
     width: 25px;
     height: 25px;
@@ -533,52 +432,52 @@
     margin-right: 3px;
     border: 1px solid #efefef;
     cursor: pointer;
-}
-
-.red-bg {
-    background: #EF4035;
-}
-
-.orange-bg {
-    background: #F26F21;
-}
-
-.yellow-bg {
-    background: #FFC153;
-}
-
-.green-bg {
-    background: #5CB85C;
-}
-
-.turquoise-bg {
-    background: #41C4AB;
-}
-
-.aqua-bg {
-    background: #38E6D8;
-}
-
-.blue-bg {
-    background: #0A8FD5;
-}
-
-.purple-bg {
-    background: #AC5AFF;
-}
-
-.pink-bg {
-    background: #F62459;
-}
-
-.tan-bg {
-    background: #C2B49A;
-}
-
-@media(max-width:480px) {
-    #style-switcher {
-        top: 30px;
     }
-}		
+
+    .red-bg {
+    background: #EF4035;
+    }
+
+    .orange-bg {
+    background: #F26F21;
+    }
+
+    .yellow-bg {
+    background: #FFC153;
+    }
+
+    .green-bg {
+    background: #5CB85C;
+    }
+
+    .turquoise-bg {
+    background: #41C4AB;
+    }
+
+    .aqua-bg {
+    background: #38E6D8;
+    }
+
+    .blue-bg {
+    background: #0A8FD5;
+    }
+
+    .purple-bg {
+    background: #AC5AFF;
+    }
+
+    .pink-bg {
+    background: #F62459;
+    }
+
+    .tan-bg {
+    background: #C2B49A;
+    }
+
+    @media(max-width:480px) {
+    #style-switcher {
+    top: 30px;
+    }
+    }
     </style>
-</body></html>
+{% endblock %}

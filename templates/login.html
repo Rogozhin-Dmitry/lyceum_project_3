@@ -1,217 +1,105 @@
-<!DOCTYPE html>
-<!--[if IE 9 ]>    <html lang="ru" class="no-js ie9"> <![endif]-->
-<!--[if (gt IE 9)|!(IE)]><!--> <html lang="ru" class="no-js">
-<!--<![endif]--><!-- head
-    ============================================================================ -->
-    <head>
-        <title>Easy Language</title>
+{% extends "main_form_design.html" %}
 
-        <meta charset="utf-8">
-        <meta name="apple-mobile-web-app-capable" content="yes">
-        <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-        <link rel="shortcut icon" href="{{ url_for('static', filename='images/icons/favicon.ico') }}">
-        <link rel="apple-touch-icon" sizes="57x57" href="//lpbuilder.pro/images/icons/apple-touch-icon-57x57.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="//lpbuilder.pro/images/icons/apple-touch-icon-60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="//lpbuilder.pro/images/icons/apple-touch-icon-72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="//lpbuilder.pro/images/icons/apple-touch-icon-76x76.png">
-        <link rel="apple-touch-icon" sizes="114x114" href="//lpbuilder.pro/images/icons/apple-touch-icon-114x114.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="//lpbuilder.pro/images/icons/apple-touch-icon-120x120.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="//lpbuilder.pro/images/icons/apple-touch-icon-144x144.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="//lpbuilder.pro/images/icons/apple-touch-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="//lpbuilder.pro/images/icons/apple-touch-icon-180x180.png">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/vendor/bootstrap/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='fonts/font-awesome/css/font-awesome.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/social-icons.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/swiper/css/swiper.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/mediaelement/css/mediaelementplayer.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/fancybox/jquery.fancybox.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='js/plugins/wow/css/animate.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-		<link id="changeable-colors" rel="stylesheet" href="{{ url_for('static', filename='css/css/red.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
-
-        <script type="text/javascript" async="" src="https://mc.yandex.ru/metrika/watch.js"></script>
-        <script async="" src="https://mc.yandex.ru/metrika/tag.js"></script>
-        <script src="{{ url_for('static', filename='js/vendor/modernizr-custom.js') }}"></script>
-    </head>
-
-    <body class="nbs-10" data-spy="scroll" data-target=".header-menu-container" data-offset="61">
-        <div id="up-button"><a href="#" title="To Top"><i class="fa fa-angle-up"></i></a></div>
-
-        <div id="main-wrapper">
-            <header id="header-section-1" class="header-section header-style-1">
-                <div class="header-section-container">
-                    <div class="header-menu">
-                        <div class="header-menu" style="height: 80px;"><div class="header-menu" style="height: 80px;"><div class="header-menu" style="height: 80px;"><div class="header-menu-container header-menu-stuck">
-                            <nav class="navbar">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="navbar-header">
-                                                <a href="/" class="navbar-brand" title="Easy Language">
-                                                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Easy Language">
-                                                </a>
-                                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-                                                    Menu <span><i class="lines"></i></span>
-                                                </button>
-                                            </div>
-                                            <div class="collapse navbar-collapse">
-                                                <ul class="nav navbar-nav navbar-right">
-                                                    <li>
-                                                        <a href="/" title="Главная">Главная</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/info" title="О нас">О нас</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/bye" title="Тарифы">Тарифы</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/bye" title="Курсы">Курсы</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/team" title="Команда">Команда</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/info" title="Контакты">Контакты</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/login" title="Purchase" class="btn btn-lpbuilder wave-effect">Профиль</a>
-                                                    </li>
-
-                                                </ul>
-                                            </div>
+{% block content %}
+    <div id="special-section-3" class="special-section grey-section">
+        <div class="section-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 form-block account-form-block signinform">
+                        <div class="form-block-container">
+                            <form action="" method="post" class="item">
+                                {% if current_user.is_authenticated %}
+                                    <div class="col-md-12">
+                                        <div class="form-group text-center">
+                                            <a href="/" class="navbar-brand" title="LPB">
+                                                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LPB Logo">
+                                            </a>
+                                            <h2>Выйти из аккаунта</h2>
                                         </div>
                                     </div>
-                                </div>
-                            </nav>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <a href="/logout" title="Выход" class="btn btn-lpbuilder wave-effect">ВЫХОД</a>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    {{ form.hidden_tag() }}
+                                    <div class="col-md-12">
+                                        <div class="form-group text-center">
+                                            <a href="/" class="navbar-brand" title="LPB">
+                                                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LPB Logo">
+                                            </a>
+                                            <h2>Войти в профиль</h2>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            {{ form.email(class="form-control signin-username input-filled", type="email") }}
+                                            <label>Логин</label>
+                                        </div>
+                                    </div>
 
-                        </div></div></div></div><!-- /End Header Menu Container -->
-                    </div><!-- /End Header Menu -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            {{ form.password(class="form-control signin-password input-filled", type="password") }}
+                                            <label>Пароль</label>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ form.remember_me(class="form-control signin-rememberme", value="accepted") }}
+                                            <label>Запомнить меня?</label>
+                                        </div>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <div class="form-group text-right">
+                                            <a href="/remember" title="Forget Password" class="forget-password">Забыли пароль?</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group text-center">
+                                            <h5>{{ message }}</h5>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-lpbuilder wave-effect">ВХОД</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group text-center">
+                                            <h5>Нет аккаунта?</h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <a href="/register" title="Sign Up" class="btn btn-lpbuilder wave-effect">ЗАРЕГЕСТРИРОВАТЬСЯ</a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
                 </div>
-            </header>
-
-            <div id="special-section-3" class="special-section grey-section">
-                <!-- Section Container -->
-                <div class="section-container">
-
-
-                    <!-- container -->
-                    <div class="container">
-                        <!-- row -->
-                        <div class="row">
-
-
-                            <!-- Contact Form Block -->
-                            <div class="col-md-12 form-block account-form-block signinform">
-                                <!-- Form Block Container -->
-                                <div class="form-block-container">
-                                    <form action="" method="post" class="item">
-                                        {% if current_user.is_authenticated %}
-                                            <div class="col-md-12">
-                                                <div class="form-group text-center">
-                                                    <a href="/" class="navbar-brand" title="LPB">
-                                                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LPB Logo">
-                                                    </a>
-                                                    <h2>Выйти из аккаунта</h2>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-lpbuilder wave-effect">ВЫХОД</button>
-                                                </div>
-                                            </div>
-                                        {% else %}
-                                            {{ form.hidden_tag() }}
-                                            <div class="col-md-12">
-                                                <div class="form-group text-center">
-                                                    <a href="/" class="navbar-brand" title="LPB">
-                                                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LPB Logo">
-                                                    </a>
-                                                    <h2>Войти в профиль</h2>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    {{ form.email(class="form-control signin-username input-filled", type="email") }}
-                                                    <label>Логин</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    {{ form.password(class="form-control signin-password input-filled", type="password") }}
-                                                    <label>Пароль</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    {{ form.remember_me(class="form-control signin-rememberme", value="accepted") }}
-                                                    <label>Запомнить меня?</label>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div class="form-group text-right">
-                                                    <a href="/remember" title="Forget Password" class="forget-password">Забыли пароль?</a>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group text-center">
-                                                    <h5>{{ message }}</h5>
-                                                </div>
-                                                <div class="form-group">
-                                                    <button type="submit" class="btn btn-lpbuilder wave-effect">ВХОД</button>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group text-center">
-                                                    <h5>Нет аккаунта?</h5>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <a href="/register" title="Sign Up" class="btn btn-lpbuilder wave-effect">ЗАРЕГЕСТРИРОВАТЬСЯ</a>
-                                                </div>
-                                            </div>
-                                        {% endif %}
-                                    </form>
-                                </div><!-- /End Form Block Container -->
-                            </div><!-- /End Contact Form Block -->
-
-
-                        </div><!-- /End row -->
-                    </div><!-- /End container -->
-
-
-                </div><!-- /End Section Container -->
-            </div><!-- /End Special Section 3 --></div><!-- /End Main Wrapper -->
-
-
-
-
-        <!-- Java Script Files
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        ======================================================================== -->
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/mobile/mobile.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-		<script type="text/javascript" src="https://lpbuilder.pro/js/app.js"></script>
+            </div>
+        </div>
+    </div>
+    <!-- Java Script Files
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    ======================================================================== -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/mobile/mobile.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script type="text/javascript" src="https://lpbuilder.pro/js/app.js"></script>
     <style>
-#style-switcher {
+    #style-switcher {
     z-index: 9999;
     position: fixed;
     top: 100px;
@@ -226,24 +114,24 @@
     -webkit-transition: all 0.5s;
     -moz-transition: all 0.5s;
     transition: all 0.5s;
-}
+    }
 
-.close-style-switcher {
+    .close-style-switcher {
     left: -212px;
-}
+    }
 
-.open-style-switcher {
+    .open-style-switcher {
     left: -1px;
-}
+    }
 
-#style-switcher .segment {
+    #style-switcher .segment {
     width: 100%;
     padding: 15px 10px 15px 0;
     padding: 15px 25px;
 
-}
+    }
 
-#style-switcher a.panel-button {
+    #style-switcher a.panel-button {
     position: absolute;
     top: 30px;
     right: -50px;
@@ -257,13 +145,13 @@
     line-height: 47px;
     background: white;
     cursor: pointer;
-}
+    }
 
-#style-switcher h3 {
+    #style-switcher h3 {
     margin: 0;
-}
+    }
 
-#style-switcher .segment a.switcher {
+    #style-switcher .segment a.switcher {
     display: inline-block;
     width: 25px;
     height: 25px;
@@ -271,53 +159,52 @@
     margin-right: 3px;
     border: 1px solid #efefef;
     cursor: pointer;
-}
-
-.red-bg {
-    background: #EF4035;
-}
-
-.orange-bg {
-    background: #F26F21;
-}
-
-.yellow-bg {
-    background: #FFC153;
-}
-
-.green-bg {
-    background: #5CB85C;
-}
-
-.turquoise-bg {
-    background: #41C4AB;
-}
-
-.aqua-bg {
-    background: #38E6D8;
-}
-
-.blue-bg {
-    background: #0A8FD5;
-}
-
-.purple-bg {
-    background: #AC5AFF;
-}
-
-.pink-bg {
-    background: #F62459;
-}
-
-.tan-bg {
-    background: #C2B49A;
-}
-
-@media(max-width:480px) {
-    #style-switcher {
-        top: 30px;
     }
-}
+
+    .red-bg {
+    background: #EF4035;
+    }
+
+    .orange-bg {
+    background: #F26F21;
+    }
+
+    .yellow-bg {
+    background: #FFC153;
+    }
+
+    .green-bg {
+    background: #5CB85C;
+    }
+
+    .turquoise-bg {
+    background: #41C4AB;
+    }
+
+    .aqua-bg {
+    background: #38E6D8;
+    }
+
+    .blue-bg {
+    background: #0A8FD5;
+    }
+
+    .purple-bg {
+    background: #AC5AFF;
+    }
+
+    .pink-bg {
+    background: #F62459;
+    }
+
+    .tan-bg {
+    background: #C2B49A;
+    }
+
+    @media(max-width:480px) {
+    #style-switcher {
+    top: 30px;
+    }
+    }
     </style>
-    </body>
-</html>
+{% endblock %}
