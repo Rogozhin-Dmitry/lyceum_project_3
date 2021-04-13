@@ -3,7 +3,7 @@ from flask import Flask, render_template, url_for, redirect, request, abort, mak
 from data.users import User
 from data.categories import Category
 from data.tests_pages import FirstTestPage, SecondTestPage
-from forms.user import RegisterForm, LoginForm, ChangeForm
+from forms.user import RegisterForm, LoginForm, ChangeForm, SmallLoginForm
 from forms.tests_forms import FirstTestForm, SecondTestForm
 from forms.list_of_tests import TestForm
 from forms.create_tests_form import FirstTestCreateForm, PictureSlot, WordSlot, SecondTestCreateForm, TestCreateForm, \
@@ -16,6 +16,7 @@ from wtforms import FileField
 import shutil
 import os
 from extend_main_index_page import start_app
+
 app = Flask(__name__)
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
     days=365
@@ -119,34 +120,6 @@ def test_list():
         else:
             tests = db_sess.query(Test).filter(Test.language_id == used.index(now_language))
         return render_template("tests_list.html", form=form, tests=tests)
-
-
-@app.route('/user_edit/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_user(id):
-    form = ChangeForm()
-    if request.method == "GET":
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.id == id).first()
-        if user:
-            form.name.data = user.name
-            form.surname.data = user.surname
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(User.id == id).first()
-        if user:
-            user.name = form.name.data
-            user.surname = form.surname.data
-            db_sess.commit()
-            return redirect('/')
-        else:
-            abort(404)
-    return render_template('user_edit.html',
-                           title='Изменение профиля',
-                           form=form
-                           )
 
 
 @app.route('/first_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
@@ -500,6 +473,42 @@ def profile():
         return redirect("/login")
 
 
+@app.route('/user_edit', methods=['GET', 'POST'])
+def edit_user():
+    if request.method == "GET":
+        form = SmallLoginForm()
+        return render_template('user_edit.html', form=form, user_is_login=False)
+    elif request.method == "POST":
+        if request.form.get('main_button') == "d56b699830e77ba53855679cb1d252da":
+            if current_user.is_authenticated:
+                db_sess = db_session.create_session()
+                user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+                if user and user.check_password(request.form.get('password')):
+                    form = ChangeForm()
+                    form.name.data = user.name
+                    form.surname.data = user.surname
+                    form.email.data = user.email
+                    return render_template('user_edit.html', form=form, user_is_login=True)
+                elif user:
+                    form = SmallLoginForm()
+                    return render_template('user_edit.html', form=form, user_is_login=False,
+                                           message='Неверный пароль')
+            return redirect('/login')
+        elif request.form.get('main_button') == "save":
+            form = ChangeForm()
+            if form.validate_on_submit():
+                if current_user.is_authenticated:
+                    db_sess = db_session.create_session()
+                    user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+                    if user:
+                        user.name = form.name.data
+                        user.surname = form.surname.data
+                        user.email = form.email.data
+                        db_sess.commit()
+                        return redirect('/profile')
+            return redirect('/login')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
@@ -550,6 +559,11 @@ def login():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error_404.html'), 404
 
 
 if __name__ == '__main__':

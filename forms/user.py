@@ -25,4 +25,10 @@ class LoginForm(FlaskForm):
 class ChangeForm(FlaskForm):
     surname = StringField('Surname', validators=[DataRequired()])
     name = StringField('Name', validators=[DataRequired()])
+    email = EmailField('email', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
+class SmallLoginForm(FlaskForm):
+    password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Submit')
