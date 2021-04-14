@@ -1,95 +1,205 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {% block head %}{% endblock %}
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous">
-    <title>{{title}}</title>
-</head>
-<body>
-<nav>
-{% if current_user.is_authenticated %}
-    <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
-{% else %}
-    <p>
-        <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
-        <a class="btn btn-success" href="/login">Войти</a>
-    </p>
-{% endif %}
-</nav>
-<form action="" method="post" class="item">
-    <h1>Register Form</h1>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.email.label }}<br>
-        {{ form.email(class="form-control", type="email") }}<br>
-        {% for error in form.email.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password.label }}<br>
-        {{ form.password(class="form-control", type="password") }}<br>
-        {% for error in form.password.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password_again.label }}<br>
-        {{ form.password_again(class="form-control", type="password") }}<br>
-        {% for error in form.password_again.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-<p>
-        {{ form.surname.label }}<br>
-        {{ form.surname(class="form-control") }}<br>
-        {% for error in form.surname.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.name.label }}<br>
-        {{ form.name(class="form-control") }}<br>
-        {% for error in form.name.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.status.label }}<br>
-        {{ form.status(class="form-control") }}<br>
-        {% for error in form.status.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.motivation.label }}<br>
-        {{ form.motivation(class="form-control") }}<br>
-        {% for error in form.motivation.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-   
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-    {{message}}
-</form>
-</body>
-</html>
+{% extends "main_form_design.html" %}
+
+{% block content %}
+    <div id="special-section-3" class="special-section grey-section">
+        <div class="section-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 form-block account-form-block signinform">
+                        <div class="form-block-container">
+                            <form action="" method="post" class="item">
+                                <h1>Register Form</h1>
+                                {{ form.hidden_tag() }}
+                                <p>
+                                    {{ form.email.label }}<br>
+                                    {{ form.email(class="form-control", type="email") }}<br>
+                                    {% for error in form.email.errors %}
+                                        <p class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </p>
+                                <p>
+                                    {{ form.password.label }}<br>
+                                    {{ form.password(class="form-control", type="password") }}<br>
+                                    {% for error in form.password.errors %}
+                                        <p class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </p>
+                                <p>
+                                    {{ form.password_again.label }}<br>
+                                    {{ form.password_again(class="form-control", type="password") }}<br>
+                                    {% for error in form.password_again.errors %}
+                                        <p class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </p>
+                                <p>
+                                    {{ form.surname.label }}<br>
+                                    {{ form.surname(class="form-control") }}<br>
+                                    {% for error in form.surname.errors %}
+                                        <p class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </p>
+                                <p>
+                                    {{ form.name.label }}<br>
+                                    {{ form.name(class="form-control") }}<br>
+                                    {% for error in form.name.errors %}
+                                        <p class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </p>
+                                <p>
+                                    {{ form.status.label }}<br>
+                                    {{ form.status(class="form-control") }}<br>
+                                    {% for error in form.status.errors %}
+                                        <p class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </p>
+                                <p>
+                                    {{ form.motivation.label }}<br>
+                                    {{ form.motivation(class="form-control") }}<br>
+                                    {% for error in form.motivation.errors %}
+                                        <p class="alert alert-danger" role="alert">
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </p>
+
+                                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+                                {{message}}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Java Script Files
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    ======================================================================== -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/mobile/mobile.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script type="text/javascript" src="https://lpbuilder.pro/js/app.js"></script>
+    <style>
+    #style-switcher {
+    z-index: 9999;
+    position: fixed;
+    top: 100px;
+    width: 212px;
+    height: auto;
+    /*min-height: 200px;*/
+    border: 1px solid #f1f1f1;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: left;
+    background: white;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+    }
+
+    .close-style-switcher {
+    left: -212px;
+    }
+
+    .open-style-switcher {
+    left: -1px;
+    }
+
+    #style-switcher .segment {
+    width: 100%;
+    padding: 15px 10px 15px 0;
+    padding: 15px 25px;
+
+    }
+
+    #style-switcher a.panel-button {
+    position: absolute;
+    top: 30px;
+    right: -50px;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #f1f1f1;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: center;
+    font-size: 23px;
+    line-height: 47px;
+    background: white;
+    cursor: pointer;
+    }
+
+    #style-switcher h3 {
+    margin: 0;
+    }
+
+    #style-switcher .segment a.switcher {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-top: 5px;
+    margin-right: 3px;
+    border: 1px solid #efefef;
+    cursor: pointer;
+    }
+
+    .red-bg {
+    background: #EF4035;
+    }
+
+    .orange-bg {
+    background: #F26F21;
+    }
+
+    .yellow-bg {
+    background: #FFC153;
+    }
+
+    .green-bg {
+    background: #5CB85C;
+    }
+
+    .turquoise-bg {
+    background: #41C4AB;
+    }
+
+    .aqua-bg {
+    background: #38E6D8;
+    }
+
+    .blue-bg {
+    background: #0A8FD5;
+    }
+
+    .purple-bg {
+    background: #AC5AFF;
+    }
+
+    .pink-bg {
+    background: #F62459;
+    }
+
+    .tan-bg {
+    background: #C2B49A;
+    }
+
+    @media(max-width:480px) {
+    #style-switcher {
+    top: 30px;
+    }
+    }
+    </style>
+{% endblock %}

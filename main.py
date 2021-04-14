@@ -91,6 +91,13 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/my_tests')
+def my_tests():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    return render_template('index.html')
+
+
 @app.route('/email', methods=['GET', 'POST'])
 def email():
     if request.method == 'POST':
@@ -481,38 +488,38 @@ def profile():
 
 @app.route('/user_edit', methods=['GET', 'POST'])
 def edit_user():
-    if request.method == "GET":
-        form = SmallLoginForm()
-        return render_template('user_edit.html', form=form, user_is_login=False)
-    elif request.method == "POST":
-        if request.form.get('main_button') == "d56b699830e77ba53855679cb1d252da":
-            if current_user.is_authenticated:
-                db_sess = db_session.create_session()
-                user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
-                if user and user.check_password(request.form.get('password')):
-                    form = ChangeForm()
-                    form.name.data = user.name
-                    form.surname.data = user.surname
-                    form.email.data = user.email
-                    return render_template('user_edit.html', form=form, user_is_login=True)
-                elif user:
-                    form = SmallLoginForm()
-                    return render_template('user_edit.html', form=form, user_is_login=False,
-                                           message='Неверный пароль')
-            return redirect('/login')
-        elif request.form.get('main_button') == "save":
-            form = ChangeForm()
-            if form.validate_on_submit():
+    if current_user.is_authenticated:
+        if request.method == "GET":
+            form = SmallLoginForm()
+            return render_template('user_edit.html', form=form, user_is_login=False)
+        elif request.method == "POST":
+            if request.form.get('main_button') == "d56b699830e77ba53855679cb1d252da":
                 if current_user.is_authenticated:
                     db_sess = db_session.create_session()
                     user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
-                    if user:
-                        user.name = form.name.data
-                        user.surname = form.surname.data
-                        user.email = form.email.data
-                        db_sess.commit()
-                        return redirect('/profile')
-            return redirect('/login')
+                    if user and user.check_password(request.form.get('password')):
+                        form = ChangeForm()
+                        form.name.data = user.name
+                        form.surname.data = user.surname
+                        form.email.data = user.email
+                        return render_template('user_edit.html', form=form, user_is_login=True)
+                    elif user:
+                        form = SmallLoginForm()
+                        return render_template('user_edit.html', form=form, user_is_login=False,
+                                               message='Неверный пароль')
+            elif request.form.get('main_button') == "save":
+                form = ChangeForm()
+                if form.validate_on_submit():
+                    if current_user.is_authenticated:
+                        db_sess = db_session.create_session()
+                        user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+                        if user:
+                            user.name = form.name.data
+                            user.surname = form.surname.data
+                            user.email = form.email.data
+                            db_sess.commit()
+                            return redirect('/profile')
+    return redirect("/login")
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -563,6 +570,16 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', form=form)
+
+
+@app.route('/contacts')
+def contacts():
+    return render_template('contacts.html')
+
+
+@app.route('/info')
+def info():
+    return render_template('info.html')
 
 
 @app.route('/logout')
