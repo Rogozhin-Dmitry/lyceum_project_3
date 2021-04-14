@@ -88,15 +88,13 @@ def index():
     session['current_second_test_length'] = 2
     session['current_first_test_length'] = 2
     session['current_images_stack'] = []
-    if request.method == "POST":
-        print('XFGCH5YH5454')
     return render_template('index.html')
 
 
 @app.route('/email', methods=['GET', 'POST'])
 def email():
     if request.method == 'POST':
-        print(request.form['EMAIL'])
+        print(request.form['email'])
     return redirect('/')
 
 
@@ -422,11 +420,14 @@ def test_create():
     return render_template('test_create.html', form=form)
 
 
-@app.route('/created_test_page/<int:user_id>', methods=['GET', 'POST'])
-def created_test_page(user_id):
-    db_sess = db_session.create_session()
-    tests = db_sess.query(Test).filter(Test.creator == user_id)
-    return render_template('created_test_page.html', tests=tests)
+@app.route('/created_test_page', methods=['GET', 'POST'])
+def created_test_page():
+    if current_user.is_authenticated:
+        db_sess = db_session.create_session()
+        tests = db_sess.query(Test).filter(Test.creator == current_user.get_id())
+        return render_template('created_test_page.html', tests=tests)
+    else:
+        return redirect("/login")
 
 
 @app.route('/delete_page/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
@@ -436,6 +437,8 @@ def delete_page(test_id, page_id):
     if current_test.type == 'second_tests':
         current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
     elif current_test.type == 'first_tests':
+        current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
+    else:
         current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
     current_test.pages.remove(current_page)
     db_sess.delete(current_page)
@@ -455,12 +458,15 @@ def delete_test(test_id):
     return redirect('/created_test_page/' + str(current_user.id))
 
 
-@app.route('/test_page_creation/<int:id>')
-def test_page_creation(id):
-    db_sess = db_session.create_session()
-    current_test = db_sess.query(Test).filter(Test.id == id).first()
-    pages_list = current_test.pages
-    return render_template('test_page_creation.html', pages=pages_list, test=current_test)
+@app.route('/test_page_creation')
+def test_page_creation():
+    if current_user.is_authenticated:
+        db_sess = db_session.create_session()
+        current_test = db_sess.query(Test).filter(Test.id == current_user.get_id()).first()
+        pages_list = current_test.pages
+        return render_template('test_page_creation.html', pages=pages_list, test=current_test)
+    else:
+        return redirect("/login")
 
 
 @app.route("/profile")
@@ -509,34 +515,39 @@ def edit_user():
             return redirect('/login')
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def reqister():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают",
-                                   style=url_for('static', filename='css/form_style.css'))
-        db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть",
-                                   style=url_for('static', filename='css/form_style.css'))
-        user = User(
-            name=form.name.data,
-            email=form.email.data,
-            surname=form.name.data,
-            status=form.status.data,
-        )
-        user.set_password(form.password.data)
-        db_sess.add(user)
-        db_sess.commit()
-        if not os.path.exists('static/img/users/' + str(current_user.id)):
-            os.mkdir('static/img/users/' + str(current_user.id))
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == "GET":
+        if not current_user.is_authenticated:
+            form = RegisterForm()
+            return render_template('registration.html', title='Регистрация', form=form)
         return redirect('/profile')
-    return render_template('register.html', title='Регистрация', form=form)
+    elif request.method == "POST":
+        form = RegisterForm()
+        if form.validate_on_submit():
+            form = RegisterForm()
+            if form.password.data != form.password_again.data:
+                return render_template('registration.html', title='Регистрация',
+                                       form=form,
+                                       message="Пароли не совпадают",
+                                       style=url_for('static', filename='css/form_style.css'))
+            db_sess = db_session.create_session()
+            if db_sess.query(User).filter(User.email == form.email.data).first():
+                return render_template('registration.html', title='Регистрация',
+                                       form=form,
+                                       message="Такой пользователь уже есть",
+                                       style=url_for('static', filename='css/form_style.css'))
+            user = User()
+            user.name = form.name.data
+            user.email = form.email.data
+            user.surname = form.name.data
+            user.status = form.status.data
+            user.set_password(form.password.data)
+            db_sess.add(user)
+            db_sess.commit()
+            if not os.path.exists('static/img/users/' + str(current_user.id)):
+                os.mkdir('static/img/users/' + str(current_user.id))
+            return redirect('/profile')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -562,8 +573,12 @@ def logout():
 
 
 @app.errorhandler(404)
-def page_not_found(e):
-    return render_template('error_404.html'), 404
+def page_not_found(expression):
+    if expression:
+        expression = 404
+    else:
+        expression = 403
+    return render_template('error_404.html'), expression
 
 
 if __name__ == '__main__':
