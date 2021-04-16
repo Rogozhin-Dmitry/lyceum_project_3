@@ -79,26 +79,84 @@ def main():
     # db_sess.add(third_test)
     # db_sess.add(second_test)
     # db_sess.commit()
-    app.run(port=5001, host='127.0.0.1')
+    app.run(port=5001, host='192.168.1.105')
 
 
-@app.route('/')
-@app.route('/index')
-def index():
+class Tests:
+    def __init__(self, name, language, description):
+        self.name = name
+        self.language = language
+        self.description = description
+
+
+@app.route('/index/', methods=['GET', 'POST'])
+@app.route('/index/<int:page_id>', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/<int:page_id>', methods=['GET', 'POST'])
+def index(page_id=1):
     session['current_second_test_length'] = 2
     session['current_first_test_length'] = 2
     session['current_images_stack'] = []
-    return render_template('index.html')
+    if not current_user.is_authenticated:
+        return render_template('index.html')
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+    if request.method == 'POST':
+        block_filter = {'По популярности': 0, 'По названию': 1, 'По дате (сначала старые)': 2,
+                        'По дате (сначала новые)': 3}
+        user.current_filter = block_filter[str(request.form).split('block_filter')[-1].split("'")[2]]
+        db_sess.add(user)
+        db_sess.commit()
+    tests = [Tests('Имя теста 2', 'Немецкий', 'Не особо большое описание этого теста')]
+    import random
+    for i in range(32):
+        tests.append(Tests(f'Имя теста {random.randint(0, 1000)}', 'Немецкий', 'Не особо большое описание этого теста'))
+    if user.current_filter == 1:
+        tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
+    if len(tests) > 12 * page_id:
+        next_page_id = page_id + 1
+    else:
+        next_page_id = 0
+    if page_id > 1:
+        previous_page_id = page_id - 1
+    else:
+        previous_page_id = 0
+    return render_template('index_for_log_users.html', tests=tests[12 * (page_id - 1):12 * page_id],
+                           current_filter=user.current_filter, page=[previous_page_id, next_page_id])
 
 
-@app.route('/my_tests')
-def my_tests():
+@app.route('/my_tests/', methods=['GET', 'POST'])
+@app.route('/my_tests/<int:page_id>', methods=['GET', 'POST'])
+def my_tests(page_id=1):
     if not current_user.is_authenticated:
         return redirect('/login')
-    return render_template('index.html')
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+    if request.method == 'POST':
+        block_filter = {'По популярности': 0, 'По названию': 1, 'По дате (сначала старые)': 2,
+                        'По дате (сначала новые)': 3}
+        user.current_filter = block_filter[str(request.form).split('block_filter')[-1].split("'")[2]]
+        db_sess.add(user)
+        db_sess.commit()
+    tests = [Tests('Имя теста 2', 'Немецкий', 'Не особо большое описание этого теста')]
+    import random
+    for i in range(32):
+        tests.append(Tests(f'Имя теста {random.randint(0, 1000)}', 'Немецкий', 'Не особо большое описание этого теста'))
+    if user.current_filter == 1:
+        tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
+    if len(tests) > 12 * page_id:
+        next_page_id = page_id + 1
+    else:
+        next_page_id = 0
+    if page_id > 1:
+        previous_page_id = page_id - 1
+    else:
+        previous_page_id = 0
+    return render_template('my_tests.html', tests=tests[12 * (page_id - 1):12 * page_id],
+                           current_filter=user.current_filter, page=[previous_page_id, next_page_id])
 
 
-@app.route('/email', methods=['GET', 'POST'])
+@app.route('/email', methods=['POST'])
 def email():
     if request.method == 'POST':
         print(request.form['email'])
@@ -532,29 +590,25 @@ def registration():
     elif request.method == "POST":
         form = RegisterForm()
         if form.validate_on_submit():
-            form = RegisterForm()
             if form.password.data != form.password_again.data:
-                return render_template('registration.html', title='Регистрация',
-                                       form=form,
-                                       message="Пароли не совпадают",
-                                       style=url_for('static', filename='css/form_style.css'))
+                return render_template('registration.html', form=form, message="Пароли не совпадают")
             db_sess = db_session.create_session()
             if db_sess.query(User).filter(User.email == form.email.data).first():
-                return render_template('registration.html', title='Регистрация',
-                                       form=form,
-                                       message="Такой пользователь уже есть",
-                                       style=url_for('static', filename='css/form_style.css'))
+                return render_template('registration.html', form=form, message="Такой пользователь уже есть")
             user = User()
             user.name = form.name.data
             user.email = form.email.data
-            user.surname = form.name.data
-            user.status = form.status.data
+            user.surname = form.surname.data
             user.set_password(form.password.data)
             db_sess.add(user)
             db_sess.commit()
-            if not os.path.exists('static/img/users/' + str(current_user.id)):
-                os.mkdir('static/img/users/' + str(current_user.id))
+            login_user(user)
+            if not os.path.exists('static/img/users/' +
+                                  str(db_sess.query(User).filter(User.email == form.email.data).first().id)):
+                os.mkdir('static/img/users/'
+                         + str(db_sess.query(User).filter(User.email == form.email.data).first().id))
             return redirect('/profile')
+        return redirect('/login')
 
 
 @app.route('/login', methods=['GET', 'POST'])

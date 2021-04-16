@@ -23,7 +23,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                            primary_key=True, autoincrement=True)
     surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    status = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     email = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
@@ -31,6 +30,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                                       default=datetime.datetime.now)
     score = sqlalchemy.Column(sqlalchemy.Integer,
                               default=0)
+    current_filter = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     passed_test = orm.relation("Test",
                                secondary="association",
                                backref="users")

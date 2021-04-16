@@ -1,0 +1,192 @@
+{% extends "main_form_design.html" %}
+
+{% block content %}
+    <div class="white-section section-lg-padding border-bottom">
+        <div class="section-container">
+            <div class="container">
+                <div class="row">
+                    <div class="title-block-container text-center">
+                            <h2>Ваши тесты</h2>
+                            <p>Это ваши личные тесты, а так же те на которые вы подписались</p>
+                            <div class="line-separator"></div>
+                        </div>
+                    <div class="form-block-container text-center">
+                        <form method="post" action="">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <select class="lpbuilder-select" style="display: none;" name="block_filter">
+                                        <option value="0"{% if current_filter == 0 %}selected=""{% endif %}>По популярности</option>
+                                        <option value="1"{% if current_filter == 1 %}selected=""{% endif %}>По названию</option>
+                                        <option value="2"{% if current_filter == 2 %}selected=""{% endif %}>По дате (сначала старые)</option>
+                                        <option value="3"{% if current_filter == 3 %}selected=""{% endif %}>По дате (сначала новые)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-lpbuilder wave-effect">Применить фильтр</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% for test in tests %}
+                        <div class="col-md-3 col-sm-6 content-block">
+                        <div class="content-block-container" style="height: 333px;">
+                            <div class="image-block">
+                                <div class="image-block-container">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-002-1.jpg') }}" alt="Image Block">
+                                    <a href="/" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                                </div>
+                            </div>
+                            <h4>{{test.name}}</h4>
+                            <h4>Язык: {{test.language}}</h4>
+                            <p>{{test.description}}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% for test in range(4 - tests|length % 4) %}
+                        <div class="col-md-3 col-sm-6 content-block">
+                        <div class="content-block-container" style="height: 333px;">
+                            <div class="image-block">
+                                <div class="image-block-container">
+                                    <img src="" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="text-center">
+                        {% if page[0] > 1 %}
+                            <a href="/my_tests/{{page[0]}}" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
+                        {% elif page[0] == 1 %}
+                            <a href="/my_tests/" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
+                        {% endif %}
+                        {% if page[1] %}
+                            <a href="/my_tests/{{page[1]}}" title="Следующая страница" class="btn btn-lpbuilder wave-effect">Следующая страница</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Java Script Files
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    ======================================================================== -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/mobile/mobile.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script type="text/javascript" src="https://lpbuilder.pro/js/app.js"></script>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-155226992-1"></script>
+    <style>
+    #style-switcher {
+    z-index: 9999;
+    position: fixed;
+    top: 100px;
+    width: 212px;
+    height: auto;
+    /*min-height: 200px;*/
+    border: 1px solid #f1f1f1;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: left;
+    background: white;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+    }
+
+    .close-style-switcher {
+    left: -212px;
+    }
+
+    .open-style-switcher {
+    left: -1px;
+    }
+
+    #style-switcher .segment {
+    width: 100%;
+    padding: 15px 10px 15px 0;
+    padding: 15px 25px;
+
+    }
+
+    #style-switcher a.panel-button {
+    position: absolute;
+    top: 30px;
+    right: -50px;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #f1f1f1;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: center;
+    font-size: 23px;
+    line-height: 47px;
+    background: white;
+    cursor: pointer;
+    }
+
+    #style-switcher h3 {
+    margin: 0;
+    }
+
+    #style-switcher .segment a.switcher {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-top: 5px;
+    margin-right: 3px;
+    border: 1px solid #efefef;
+    cursor: pointer;
+    }
+
+    .red-bg {
+    background: #EF4035;
+    }
+
+    .orange-bg {
+    background: #F26F21;
+    }
+
+    .yellow-bg {
+    background: #FFC153;
+    }
+
+    .green-bg {
+    background: #5CB85C;
+    }
+
+    .turquoise-bg {
+    background: #41C4AB;
+    }
+
+    .aqua-bg {
+    background: #38E6D8;
+    }
+
+    .blue-bg {
+    background: #0A8FD5;
+    }
+
+    .purple-bg {
+    background: #AC5AFF;
+    }
+
+    .pink-bg {
+    background: #F62459;
+    }
+
+    .tan-bg {
+    background: #C2B49A;
+    }
+
+    @media(max-width:480px) {
+    #style-switcher {
+    top: 30px;
+    }
+    }
+    </style>
+{% endblock %}

@@ -8,74 +8,71 @@
                     <div class="col-md-12 form-block account-form-block signinform">
                         <div class="form-block-container">
                             <form action="" method="post" class="item">
-                                <h1>Register Form</h1>
                                 {{ form.hidden_tag() }}
-                                <p>
-                                    {{ form.email.label }}<br>
-                                    {{ form.email(class="form-control", type="email") }}<br>
-                                    {% for error in form.email.errors %}
-                                        <p class="alert alert-danger" role="alert">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </p>
-                                <p>
-                                    {{ form.password.label }}<br>
-                                    {{ form.password(class="form-control", type="password") }}<br>
-                                    {% for error in form.password.errors %}
-                                        <p class="alert alert-danger" role="alert">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </p>
-                                <p>
-                                    {{ form.password_again.label }}<br>
-                                    {{ form.password_again(class="form-control", type="password") }}<br>
-                                    {% for error in form.password_again.errors %}
-                                        <p class="alert alert-danger" role="alert">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </p>
-                                <p>
-                                    {{ form.surname.label }}<br>
-                                    {{ form.surname(class="form-control") }}<br>
-                                    {% for error in form.surname.errors %}
-                                        <p class="alert alert-danger" role="alert">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </p>
-                                <p>
-                                    {{ form.name.label }}<br>
-                                    {{ form.name(class="form-control") }}<br>
-                                    {% for error in form.name.errors %}
-                                        <p class="alert alert-danger" role="alert">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </p>
-                                <p>
-                                    {{ form.status.label }}<br>
-                                    {{ form.status(class="form-control") }}<br>
-                                    {% for error in form.status.errors %}
-                                        <p class="alert alert-danger" role="alert">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </p>
-                                <p>
-                                    {{ form.motivation.label }}<br>
-                                    {{ form.motivation(class="form-control") }}<br>
-                                    {% for error in form.motivation.errors %}
-                                        <p class="alert alert-danger" role="alert">
-                                            {{ error }}
-                                        </p>
-                                    {% endfor %}
-                                </p>
+                                <div class="col-md-12">
+                                    <div class="form-group text-center">
+                                        <a href="/" class="navbar-brand" title="LPB">
+                                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LPB Logo">
+                                        </a>
+                                        <h2>Регистрация</h2>
+                                    </div>
+                                </div>
 
-                                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-                                {{message}}
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{ form.email(class="form-control signin-username input-filled", type="email") }}
+                                        <label>Логин</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{ form.password(class="form-control signin-password input-filled", type="password") }}
+                                        <label>Пароль</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{ form.password_again(class="form-control signin-password_again input-filled", type="password") }}
+                                        <label>Повторите пароль</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{ form.name(class="form-control signin-name input-filled", type="name") }}
+                                        <label>Имя</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{ form.surname(class="form-control signin-surname input-filled", type="surname") }}
+                                        <label>Фамилия</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group text-center">
+                                        <h5>{{ message }}</h5>
+                                    </div>
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-lpbuilder wave-effect">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group text-center">
+                                        <h5>Уже есть аккаунт?</h5>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <a href="/login" title="Sign Up" class="btn btn-lpbuilder wave-effect">ВХОД</a>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
