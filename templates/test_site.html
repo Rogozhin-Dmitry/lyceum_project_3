@@ -1,38 +1,61 @@
 {% extends "main_form_design.html" %}
 
 {% block content %}
-    <div class="white-section section-lg-padding border-bottom">
-        <div class="section-container">
-            <div class="container">
-                <div class="row">
-                    <div class="title-block-container text-center">
-                        <div class="col-md-3 col-sm-6 content-block">
-                            <div class="content-block-container" style="height: 100px;">
-                                <div class="image-block">
-                                    <div class="image-block-container">
-                                        <img src="{{ url_for('static', filename='images/hero/hero-002-1.jpg') }}" alt="Image Block">
-                                    </div>
+    <div id="cta-section-3" class="cta-section">
+        <div class="white-section">
+            <div class="section-container">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="image-block">
+                                <div class="image-block-container">
+                                    <img src="{{ url_for('static', filename='images/hero/hero-002-1.jpg') }}" alt="Image Block">
                                 </div>
                             </div>
                         </div>
-                        <div class="title-block-container text-center">
-                            <h2>{{test.name}}</h2>
-                            <h2>Язык: {{test.language}}</h2>
-                            <h4>{{test.description}}</h4>
-                            <h4>Автор теста <a href="/my_tests" title="Автор" class="wave-effect">{{ test.author.name }}{{ test.author.surname }}</a></h4>
-                        </div>
-                    </div>
-                    <div class="col-md-4 content-block">
-                        <div class="content-block-container" style="height: 200px;">
-                            <i class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></i>
-                            <div class="line-separator"></div>
-                            <i class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></i>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12 title-block">
+                                    <div class="title-block-container">
+                                        <h2>{{test.name}}</h2>
+                                        <div class="line-separator"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 content-block">
+                                    <div class="content-block-container">
+                                        <h2>Язык: {{test.language}}</h2>
+                                        <h4>{{test.description}}</h4>
+                                        <h4>Автор теста <a href="/my_tests" title="Автор" clas s="wave-effect">{{ test.author.name }}{{ test.author.surname }}</a></h4>
+                                        <a href="/my_tests" title="Статистика" class="btn btn-lpbuilder wave-effect">Статистика</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="white-section section-lg-padding border-bottom">
+        <div class="section-container">
+            <div class="container">
+                <div class="row">
+                    {% for test in range(4) %}
+                        <div class="col-md-3 col-sm-6 content-block">
+                            <div class="content-block-container" style="height: 333px;">
+                                <div class="image-block">
+                                    <div class="image-block-container"></div>
+                                </div>
+                                <a href="/" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>                        </div>
+                                <h4>надпись</h4>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Java Script Files
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
