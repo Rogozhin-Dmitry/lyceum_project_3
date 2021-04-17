@@ -79,7 +79,7 @@ def main():
     # db_sess.add(third_test)
     # db_sess.add(second_test)
     # db_sess.commit()
-    app.run(port=5001, host='192.168.1.105')
+    app.run(port=5001, host='127.0.0.1')
 
 
 class Tests:
@@ -87,6 +87,8 @@ class Tests:
         self.name = name
         self.language = language
         self.description = description
+        db_sess = db_session.create_session()
+        self.author = db_sess.query(User).filter(User.id == 1).first()
 
 
 @app.route('/index/', methods=['GET', 'POST'])
@@ -140,7 +142,7 @@ def my_tests(page_id=1):
         db_sess.commit()
     tests = [Tests('Имя теста 2', 'Немецкий', 'Не особо большое описание этого теста')]
     import random
-    for i in range(32):
+    for i in range(132):
         tests.append(Tests(f'Имя теста {random.randint(0, 1000)}', 'Немецкий', 'Не особо большое описание этого теста'))
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
@@ -161,6 +163,12 @@ def email():
     if request.method == 'POST':
         print(request.form['email'])
     return redirect('/')
+
+
+@app.route('/test_site')
+def test_site():
+    test_data = Tests('Имя теста 2', 'Немецкий', 'Не особо большое описание этого теста')
+    return render_template('test_site.html', test=test_data)
 
 
 @app.route("/tests_list", methods=['GET', 'POST'])
