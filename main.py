@@ -1,21 +1,22 @@
-from data import db_session
-from flask import Flask, render_template, url_for, redirect, request, abort, make_response, session
-from data.users import User
-from data.categories import Category
-from data.tests_pages import FirstTestPage, SecondTestPage
-from forms.user import RegisterForm, LoginForm, ChangeForm, SmallLoginForm
-from forms.tests_forms import FirstTestForm, SecondTestForm
-from forms.list_of_tests import TestForm
-from forms.create_tests_form import FirstTestCreateForm, PictureSlot, WordSlot, SecondTestCreateForm, TestCreateForm, \
-    NewTestForm
-from data.tests import Test, FirstTest, SecondTest
+import datetime
+import os
+import shutil
+
+from flask import Flask, render_template, redirect, request, session
 from flask_login import LoginManager
 from flask_login import login_user, login_required, logout_user, current_user
-import datetime
-from wtforms import FileField
-import shutil
-import os
+
+from data import db_session
+from data.categories import Category
+from data.tests import Test, FirstTest, SecondTest
+from data.tests_pages import FirstTestPage, SecondTestPage
+from data.users import User
 from extend_main_index_page import start_app
+from forms.create_tests_form import PictureSlot, WordSlot, SecondTestCreateForm, TestCreateForm, \
+    NewTestForm
+from forms.list_of_tests import TestForm
+from forms.tests_forms import FirstTestForm, SecondTestForm
+from forms.user import RegisterForm, LoginForm, ChangeForm, SmallLoginForm
 
 app = Flask(__name__)
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
@@ -43,41 +44,68 @@ def main():
     # db_sess.query(FirstTest).delete()
     # db_sess.query(SecondTest).delete()
     # db_sess.query(FirstTestPage).delete()
-    # # random_user = User(name="Eshly", surname="Dark", status="student", email="alpusik2000004@gmail.com")
+    # random_user = User(name="Eshly", surname="Dark", status="student", email="alpusik2000004@gmail.com")
     # first_language = Category(name="English")
     # second_language = Category(name="Japanese")
     # random_user.set_password("Pokepark2")
-    # some_page = FirstTestPage(
-    #     image_list='/static/img/first_test/1/test1.jpg, /static/img/first_test/1/test2.jpg, /static/img/first_test/1/test3.jpg',
-    #     right_image_number=1, question="Какая фапута лучше?")
-    # second_page = FirstTestPage(
-    #     image_list='/static/img/first_test/1/test4.jpg, /static/img/first_test/1/test5.jpg, /static/img/first_test/1/test6.jpg',
-    #     right_image_number=2, question="Какая картинка лучше?")
-    # third_page = FirstTestPage(
-    #     image_list='/static/img/first_test/1/test7.png, /static/img/first_test/1/test8.png, /static/img/first_test/1/test9.png',
-    #     right_image_number=1, question="Какой каштан лучше?")
-    # first_test = FirstTest(title="something", language_id=1, creator=1, type='first_tests',
-    #                        title_picture='/static/img/first_test/1/title.jpg')
-    # second_test = FirstTest(title="something2", language_id=2, creator=1, type='first_tests')
-    # second_page1 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
-    #                               right_word_number=2)
-    # second_page2 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
-    #                               right_word_number=2)
-    # third_test = SecondTest(title="something3", language_id=2, creator=1, type='second_tests')
-    # second_page3 = SecondTestPage(words_list='no, yes, is', first_sentence='My name', second_sentence='Lucas',
-    #                               right_word_number=2)
-    # first_test.pages.append(some_page)
-    # first_test.pages.append(second_page)
-    # first_test.pages.append(third_page)
+    # some_page = FirstTestPage()
+    # some_page.image_list = \
+    #     '/static/img/first_test/1/test1.jpg, /static/img/first_test/1/test2.jpg, /static/img/first_test/1/test3.jpg'
+    # some_page.right_image_number = 1
+    # some_page.question = "Какая фапута лучше?"
+    # second_page = FirstTestPage()
+    # some_page.image_list = \
+    #     '/static/img/first_test/1/test4.jpg, /static/img/first_test/1/test5.jpg, /static/img/first_test/1/test6.jpg'
+    # some_page.right_image_number = 2
+    # some_page.question = "Какая картинка лучше?"
+    # third_page = FirstTestPage()
+    # some_page.image_list = \
+    #     '/static/img/first_test/1/test7.png, /static/img/first_test/1/test8.png, /static/img/first_test/1/test9.png'
+    # some_page.right_image_number = 1
+    # some_page.question = "Какой каштан лучше?"
+    # first_test_1 = FirstTest()
+    # first_test_1.title = "something"
+    # first_test_1.language_id = 1
+    # first_test_1.creator = 1
+    # first_test_1.type = 'first_tests'
+    # first_test_1.title_picture = '/static/img/first_test/1/title.jpg'
+    # second_test_1 = FirstTest()
+    # second_test_1.title = "something2"
+    # second_test_1.language_id = 2
+    # second_test_1.creator = 1
+    # second_test_1.type = 'first_tests'
+    # second_page1 = SecondTestPage()
+    # second_page1.words_list = 'no, yes, is'
+    # second_page1.first_sentence = 'My name'
+    # second_page1.second_sentence = 'Lucas'
+    # second_page1.right_word_number = 2
+    # second_page2 = SecondTestPage()
+    # second_page2.words_list = 'no, yes, is'
+    # second_page2.first_sentence = 'My name'
+    # second_page2.second_sentence = 'Lucas'
+    # second_page2.right_word_number = 2
+    # third_test = SecondTest()
+    # third_test.title = "something3"
+    # third_test.language_id = 2
+    # third_test.creator = 1
+    # third_test.type = 'second_tests'
+    # second_page3 = SecondTestPage
+    # second_page3.words_list = 'no, yes, is'
+    # second_page3.first_sentence = 'My name'
+    # second_page3.second_sentence = 'Lucas'
+    # second_page3.right_word_number = 2
+    # first_test_1.pages.append(some_page)
+    # first_test_1.pages.append(second_page)
+    # first_test_1.pages.append(third_page)
     # third_test.pages.append(second_page1)
     # third_test.pages.append(second_page2)
     # third_test.pages.append(second_page3)
     # db_sess.add(random_user)
-    # db_sess.add(first_test)
+    # db_sess.add(first_test_1)
     # db_sess.add(first_language)
     # db_sess.add(second_language)
     # db_sess.add(third_test)
-    # db_sess.add(second_test)
+    # db_sess.add(second_test_1)
     # db_sess.commit()
     app.run(port=5001, host='192.168.1.105')
 
@@ -156,6 +184,11 @@ def my_tests(page_id=1):
                            current_filter=user.current_filter, page=[previous_page_id, next_page_id])
 
 
+@app.route('/test_page')
+def test():
+    return render_template('test_page.html')
+
+
 @app.route('/email', methods=['POST'])
 def email():
     if request.method == 'POST':
@@ -186,9 +219,9 @@ def test_list():
 
 
 @app.route('/first_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
-def first_test(id, page_number):
+def first_test(user_id, page_number):
     db_sess = db_session.create_session()
-    test = db_sess.query(FirstTest).filter(FirstTest.id == id).first()
+    test = db_sess.query(FirstTest).filter(FirstTest.id == user_id).first()
     form = FirstTestForm()
     current_page = test.pages[page_number - 1]
     question = current_page.question
@@ -203,19 +236,19 @@ def first_test(id, page_number):
             score = session.get('total_score', 0)
             if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
                 session['total_score'] = score + 10
-            return redirect('/test_succeed/' + str(id))
+            return redirect('/test_succeed/' + str(user_id))
         else:
             if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
                 score = session.get('total_score', 0)
                 session['total_score'] = score + 10
-            return redirect('/first_tests/' + str(id) + '/' + str(page_number + 1))
+            return redirect('/first_tests/' + str(user_id) + '/' + str(page_number + 1))
     return render_template('first_test.html', form=form, question=question)
 
 
 @app.route('/second_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
-def second_test(id, page_number):
+def second_test(user_id, page_number):
     db_sess = db_session.create_session()
-    test = db_sess.query(SecondTest).filter(SecondTest.id == id).first()
+    test = db_sess.query(SecondTest).filter(SecondTest.id == user_id).first()
     form = SecondTestForm()
     current_page = test.pages[page_number - 1]
     first_sentence, second_sentence = current_page.first_sentence, current_page.second_sentence
@@ -228,29 +261,29 @@ def second_test(id, page_number):
             score = session.get('total_score', 0)
             if current_page.words_list.split(', ').index(form.words.data) == current_page.right_word_number:
                 session['total_score'] = score + 10
-            return redirect('/test_succeed/' + str(id))
+            return redirect('/test_succeed/' + str(user_id))
         else:
             if current_page.words_list.split(', ').index(form.words.data) == current_page.right_word_number:
                 score = session.get('total_score', 0)
                 session['total_score'] = score + 10
-            return redirect('/second_tests/' + str(id) + '/' + str(page_number + 1))
+            return redirect('/second_tests/' + str(user_id) + '/' + str(page_number + 1))
     return render_template('second_test.html', form=form, first_sentence=first_sentence,
                            second_sentence=second_sentence)
 
 
 @app.route('/test_title/<int:id>')
-def test_title(id):
+def test_title(user_id):
     db_sess = db_session.create_session()
-    test = db_sess.query(Test).filter(Test.id == id).first()
+    test = db_sess.query(Test).filter(Test.id == user_id).first()
     return render_template('test_title.html', test=test)
 
 
 @app.route('/test_succeed/<int:id>')
-def test_succeed(id):
+def test_succeed(user_id):
     score = session.get('total_score', 0)
     session['total_score'] = 0
     db_sess = db_session.create_session()
-    test = db_sess.query(FirstTest).filter(FirstTest.id == id).first()
+    test = db_sess.query(FirstTest).filter(FirstTest.id == user_id).first()
     return render_template('test_succeed.html', test=test, score=score)
 
 
@@ -278,7 +311,7 @@ def first_test_create(test_id, page_id=None):
             form.right_image_choosing.choices = new_choices
             form.right_image_choosing.data = str(current_page.right_image_number)
     if request.method == "POST":
-        session['current_som_test_length'] = current_som = session.get('current_som_test_length', 3) + 1
+        session['current_som_test_length'] = session.get('current_som_test_length', 3) + 1
         if 'over' in request.form:
             images_list = session.get('current_images_stack', [])
             if '' in images_list or len(images_list) == 0:
@@ -303,9 +336,10 @@ def first_test_create(test_id, page_id=None):
                     os.remove('static/img/first_test/' + str(test_id) + '/' + image)
             images_list = ', '.join(images_list)
             if page_id is None:
-                new_page = FirstTestPage(question=form.question.data,
-                                         right_image_number=int(form.right_image_choosing.data),
-                                         image_list=images_list)
+                new_page = FirstTestPage()
+                new_page.question = form.question.data
+                new_page.right_image_number = int(form.right_image_choosing.data)
+                new_page.image_list = images_list
                 current_test.pages.append(new_page)
                 db_sess.add(new_page)
             else:
@@ -411,14 +445,15 @@ def second_test_create(test_id, page_id=None):
                 words_list.append(word.slot.data)
             words_list = ', '.join(words_list)
             if page_id is None:
-                new_page = SecondTestPage(first_sentence=form.first_sentence.data,
-                                          second_sentence=form.second_sentence.data, words_list=words_list,
-                                          right_word_number=int(form.right_word_choosing.data))
+                new_page = SecondTestPage()
+                new_page.first_sentence = form.first_sentence.data
+                new_page.second_sentence = form.second_sentence.data
+                new_page.words_list = words_list
+                new_page.right_word_number = int(form.right_word_choosing.data)
                 current_test.pages.append(new_page)
                 db_sess.add(new_page)
             else:
                 new_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
-                print(type(new_page))
                 new_page.first_sentence = form.first_sentence.data
                 new_page.second_sentence = form.second_sentence.data
                 new_page.words_list = words_list
@@ -442,12 +477,19 @@ def test_create():
     if form.validate_on_submit():
         language_id = db_sess.query(Category).filter(Category.name == form.language.data).first().id
         if form.type.data == 'first_tests':
-            new_test = FirstTest(title=form.title.data, language_id=language_id, creator=current_user.id,
-                                 type='first_tests')
+            new_test = FirstTest()
+            new_test.title = form.title.data
+            new_test.language_id = language_id
+            new_test.creator = current_user.id
+            new_test.type = 'first_tests'
+            db_sess.add(new_test)
         elif form.type.data == 'second_tests':
-            new_test = SecondTest(title=form.title.data, language_id=language_id, creator=current_user.id,
-                                  type='second_tests')
-        db_sess.add(new_test)
+            new_test = SecondTest()
+            new_test.title = form.title.data
+            new_test.language_id = language_id
+            new_test.creator = current_user.id
+            new_test.type = 'second_tests'
+            db_sess.add(new_test)
         test_id = str(db_sess.query(Test).filter((Test.title == form.title.data),
                                                  (Test.user == current_user)).first().id)
         test_type = str(db_sess.query(Test).filter((Test.title == form.title.data),
@@ -619,7 +661,7 @@ def login():
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/profile")
+            return redirect("/")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
