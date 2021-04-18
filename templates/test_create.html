@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <h5>Тип теста</h5>
+                                        <label>Тип теста</label>
                                         <select class="lpbuilder-select" style="display: none;" name="language">
                                             <option value="{{ languages[0] }}" selected="">{{ languages[0] }}</option>
                                             {% for language in languages[1:] %}
@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <h5>Язык теста</h5>
+                                        <label>Язык теста</label>
                                         <select class="lpbuilder-select" style="display: none;" name="types">
                                             <option value="{{ types[0] }}" selected="">{{ types[0] }}</option>
                                             {% for type in types[1:] %}
@@ -52,11 +52,17 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <h5>Тип доступа к тесту</h5>
+                                        <label>Тип доступа к тесту</label>
                                         <select class="lpbuilder-select" style="display: none;" name="open">
                                             <option value="Общий доступ" selected="">Общий доступ</option>
                                             <option value="Только ваш">Только ваш</option>
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        {{ form.description(class="form-control") }}
+                                        <label>Небольшое описание</label>
                                     </div>
                                 </div>
                                 <div class="col-md-12">

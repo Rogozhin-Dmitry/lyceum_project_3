@@ -34,6 +34,7 @@ class SecondTestCreateForm(FlaskForm):
 class TestCreateForm(FlaskForm):
     title = StringField('Название', validators=[DataRequired()])
     title_picture = FileField('Картинка')
+    description = TextAreaField('Description')
     submit = SubmitField('Submit')
 
 

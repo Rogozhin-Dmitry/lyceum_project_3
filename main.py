@@ -491,6 +491,7 @@ def test_create():
             new_test.language_id = language_id
             new_test.creator = current_user.id
             new_test.open = args['open'] != 'Только ваш'
+            new_test.description = form.description.data
             db_sess.add(new_test)
             test = db_sess.query(Test).filter((Test.title == form.title.data), (Test.user == current_user)).first()
             user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
