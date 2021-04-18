@@ -6,8 +6,8 @@
             <div class="container">
                 <div class="row">
                     <div class="title-block-container text-center">
-                            <h2>Ваши тесты</h2>
-                            <p>Это ваши личные тесты, а так же те на которые вы подписались</p>
+                            <h2>Тесты пользователя {{ author.name }} {{ author.surname }}</h2>
+                            <p>Это тесты пользователя {{ author.name }} {{ author.surname }} которыми он захотел поделиться</p>
                             <div class="line-separator"></div>
                         </div>
                     <div class="form-block-container text-center">
@@ -29,42 +29,50 @@
                             </div>
                         </form>
                     </div>
-                    {% for test in tests %}
-                        <div class="col-md-3 col-sm-6 content-block">
-                            <div class="content-block-container" style="height: 333px;">
-                                <div class="image-block">
-                                    <div class="image-block-container">
-                                        <img src="{{ test.title_picture }}" alt="Image Block">
-                                        <a href="/test_site/{{ test.id }}" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                    {% if tests %}
+                        {% for test in tests %}
+                            <div class="col-md-3 col-sm-6 content-block">
+                                <div class="content-block-container" style="height: 333px;">
+                                    <div class="image-block">
+                                        <div class="image-block-container">
+                                            <img src="{{ test.title_picture }}" alt="Image Block">
+                                            <a href="/test_site/{{ test.id }}" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <h4>{{test.title}}</h4>
+                                    <h4>Язык: {{test.test_language}}</h4>
+                                    <p>{{test.description}}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% for test in range(4 - tests|length % 4) %}
+                            <div class="col-md-3 col-sm-6 content-block">
+                                <div class="content-block-container" style="height: 333px;">
+                                    <div class="image-block">
+                                        <div class="image-block-container">
+                                            <img src="" alt="">
+                                        </div>
                                     </div>
                                 </div>
-                                <h4>{{test.title}}</h4>
-                                <h4>Язык: {{test.test_language}}</h4>
-                                <p>{{test.description}}</p>
                             </div>
+                        {% endfor %}
+                        <div class="text-center">
+                            {% if page[0] > 1 %}
+                                <a href="/open_user_test/{{page[0]}}" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
+                            {% elif page[0] == 1 %}
+                                <a href="/open_user_test/" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
+                            {% endif %}
+                            {% if page[1] %}
+                                <a href="/open_user_test/{{page[1]}}" title="Следующая страница" class="btn btn-lpbuilder wave-effect">Следующая страница</a>
+                            {% endif %}
                         </div>
-                    {% endfor %}
-                    {% for test in range(4 - tests|length % 4) %}
-                        <div class="col-md-3 col-sm-6 content-block">
-                        <div class="content-block-container" style="height: 333px;">
-                            <div class="image-block">
-                                <div class="image-block-container">
-                                    <img src="" alt="">
-                                </div>
-                            </div>
+                    {% else %}
+                        <div class="title-block-container text-center">
+                            <h2>Здесь пока пусто</h2>
+                            <p>Этот пользователь пока ничем не поделился</p>
+                            <div class="line-separator"></div>
                         </div>
-                    </div>
-                    {% endfor %}
-                    <div class="text-center">
-                        {% if page[0] > 1 %}
-                            <a href="/my_tests/{{page[0]}}" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
-                        {% elif page[0] == 1 %}
-                            <a href="/my_tests/" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
-                        {% endif %}
-                        {% if page[1] %}
-                            <a href="/my_tests/{{page[1]}}" title="Следующая страница" class="btn btn-lpbuilder wave-effect">Следующая страница</a>
-                        {% endif %}
-                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -28,6 +28,8 @@ class Test(SqlAlchemyBase, SerializerMixin):
                                 sqlalchemy.ForeignKey("users.id"))
     language_id = sqlalchemy.Column(sqlalchemy.Integer,
                                     sqlalchemy.ForeignKey("categories.id"))
+    open = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True,
+                             default=True)
     language = orm.relation('Category')
     user = orm.relation('User')
     __mapper_args__ = {

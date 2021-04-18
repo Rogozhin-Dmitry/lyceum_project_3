@@ -2,7 +2,7 @@ import datetime
 import os
 import shutil
 
-from flask import Flask, render_template, redirect, request, session
+from flask import Flask, render_template, redirect, request, session, abort
 from flask_login import LoginManager
 from flask_login import login_user, login_required, logout_user, current_user
 
@@ -39,14 +39,14 @@ def main():
     db_session.global_init("db/site_data.db")
     db_sess = db_session.create_session()
     # db_sess.query(User).delete()
-    # db_sess.query(Category).delete()
+    db_sess.query(Category).delete()
     # db_sess.query(Test).delete()
     # db_sess.query(FirstTest).delete()
     # db_sess.query(SecondTest).delete()
     # db_sess.query(FirstTestPage).delete()
-    # random_user = User(name="Eshly", surname="Dark", status="student", email="alpusik2000004@gmail.com")
-    # first_language = Category(name="English")
-    # second_language = Category(name="Japanese")
+    # random_user = User(name="Eshly", surname="Dark", email="alpusik2000004@gmail.com")
+    first_language = Category(name="English")
+    second_language = Category(name="Japanese")
     # random_user.set_password("Pokepark2")
     # some_page = FirstTestPage()
     # some_page.image_list = \
@@ -102,12 +102,12 @@ def main():
     # third_test.pages.append(second_page3)
     # db_sess.add(random_user)
     # db_sess.add(first_test_1)
-    # db_sess.add(first_language)
-    # db_sess.add(second_language)
+    db_sess.add(first_language)
+    db_sess.add(second_language)
     # db_sess.add(third_test)
     # db_sess.add(second_test_1)
-    # db_sess.commit()
-    app.run(port=5001, host='127.0.0.1')
+    db_sess.commit()
+    app.run(port=5001, host='192.168.1.105')
 
 
 class Tests:
@@ -137,12 +137,11 @@ def index(page_id=1):
         user.current_filter = block_filter[str(request.form).split('block_filter')[-1].split("'")[2]]
         db_sess.add(user)
         db_sess.commit()
-    tests = [Tests('Имя теста 2', 'Немецкий', 'Не особо большое описание этого теста')]
-    import random
-    for i in range(32):
-        tests.append(Tests(f'Имя теста {random.randint(0, 1000)}', 'Немецкий', 'Не особо большое описание этого теста'))
+    tests = db_sess.query(Test).filter(Test.open == 1).all()
+    if len(tests) // 12 + 1 < page_id:
+        abort(404)
     if user.current_filter == 1:
-        tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
+        tests = sorted(tests, key=lambda x: x.title)
     if len(tests) > 12 * page_id:
         next_page_id = page_id + 1
     else:
@@ -168,12 +167,13 @@ def my_tests(page_id=1):
         user.current_filter = block_filter[str(request.form).split('block_filter')[-1].split("'")[2]]
         db_sess.add(user)
         db_sess.commit()
-    tests = [Tests('Имя теста 2', 'Немецкий', 'Не особо большое описание этого теста')]
-    import random
-    for i in range(132):
-        tests.append(Tests(f'Имя теста {random.randint(0, 1000)}', 'Немецкий', 'Не особо большое описание этого теста'))
+    tests = db_sess.query(Test).filter(Test.creator == current_user.get_id()).all()    # 1600 x 900
+    if len(tests) // 12 + 1 < page_id:
+        abort(404)
+
     if user.current_filter == 1:
-        tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
+        tests = sorted(tests, key=lambda x: x.title)
+
     if len(tests) > 12 * page_id:
         next_page_id = page_id + 1
     else:
@@ -186,9 +186,38 @@ def my_tests(page_id=1):
                            current_filter=user.current_filter, page=[previous_page_id, next_page_id])
 
 
-@app.route('/test_page')
-def test():
-    return render_template('test_page.html')
+@app.route('/open_user_tests/', methods=['GET', 'POST'])
+@app.route('/open_user_tests/<int:user_id>/', methods=['GET', 'POST'])
+@app.route('/open_user_tests/<int:user_id>/<int:page_id>', methods=['GET', 'POST'])
+def open_user_tests(user_id=1, page_id=1):
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+    if request.method == 'POST':
+        block_filter = {'По популярности': 0, 'По названию': 1, 'По дате (сначала старые)': 2,
+                        'По дате (сначала новые)': 3}
+        user.current_filter = block_filter[str(request.form).split('block_filter')[-1].split("'")[2]]
+        db_sess.add(user)
+        db_sess.commit()
+    tests = db_sess.query(Test).filter(Test.creator == user_id).all()
+    if len(tests) // 12 + 1 < page_id:
+        abort(404)
+    if user.current_filter == 1:
+        tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
+    if len(tests) > 12 * page_id:
+        next_page_id = page_id + 1
+    else:
+        next_page_id = 0
+    if page_id > 1:
+        previous_page_id = page_id - 1
+    else:
+        previous_page_id = 0
+    author = db_sess.query(User).filter(User.id == user_id).first()
+    if not author:
+        abort(404)
+    return render_template('open_user_tests.html', tests=tests[12 * (page_id - 1):12 * page_id],
+                           current_filter=user.current_filter, page=[previous_page_id, next_page_id], author=author)
 
 
 @app.route('/email', methods=['POST'])
@@ -199,9 +228,20 @@ def email():
 
 
 @app.route('/test_site')
-def test_site():
-    test_data = Tests('Имя теста 2', 'Немецкий', 'Не особо большое описание этого теста')
-    return render_template('test_site.html', test=test_data)
+@app.route('/test_site/<int:test_id>')
+def test_site(test_id=1):
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    db_sess = db_session.create_session()
+    test = db_sess.query(Test).filter(Test.id == test_id).first()
+    if not (test.open or str(test.creator) == str(current_user.get_id())):
+        abort(404)
+    user = db_sess.query(User).filter(User.id == test.creator).first()
+    language = db_sess.query(Category).filter(Category.id == test.language_id).first()
+    test.test_language = language.name
+    test.description = 'Некое описание, что-то там и тд и тп'
+    test.author = user
+    return render_template('test_site.html', test=test)
 
 
 @app.route("/tests_list", methods=['GET', 'POST'])
@@ -531,7 +571,7 @@ def test_create():
                 test.title_picture = '/' + 'static/img/second_test/' + str(
                     test_id) + '/title/' + form.title_picture.data.filename
         db_sess.commit()
-        return redirect('/test_page_creation/' + test_id)
+        return redirect('/create_test')
     return render_template('test_create.html', form=form)
 
 
