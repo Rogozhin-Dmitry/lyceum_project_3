@@ -29,40 +29,48 @@
                             </div>
                         </form>
                     </div>
-                    {% for test in tests %}
-                        <div class="col-md-3 col-sm-6 content-block">
+                    {% if tests %}
+                        {% for test in tests %}
+                            <div class="col-md-3 col-sm-6 content-block">
+                                <div class="content-block-container" style="height: 333px;">
+                                    <div class="image-block">
+                                        <div class="image-block-container">
+                                            <img src="{{ test.title_picture }}" alt="Image Block">
+                                            <a href="/test_site/{{ test.id }}" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                                        </div>
+                                    </div>
+                                    <h4>{{test.title}}</h4>
+                                    <h4>Язык: {{test.test_language}}</h4>
+                                    <p>{{test.description}}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% for test in range(4 - tests|length % 4) %}
+                            <div class="col-md-3 col-sm-6 content-block">
                             <div class="content-block-container" style="height: 333px;">
                                 <div class="image-block">
                                     <div class="image-block-container">
-                                        <img src="{{ test.title_picture }}" alt="Image Block">
-                                        <a href="/test_site/{{ test.id }}" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                                        <img src="" alt="">
                                     </div>
                                 </div>
-                                <h4>{{test.title}}</h4>
-                                <h4>Язык: {{test.test_language}}</h4>
-                                <p>{{test.description}}</p>
                             </div>
                         </div>
-                    {% endfor %}
-                    {% for test in range(4 - tests|length % 4) %}
-                        <div class="col-md-3 col-sm-6 content-block">
-                        <div class="content-block-container" style="height: 333px;">
-                            <div class="image-block">
-                                <div class="image-block-container">
-                                    <img src="" alt="">
-                                </div>
-                            </div>
+                        {% endfor %}
+                        <div class="text-center">
+                            {% if page[0] > 1 %}
+                                <a href="/my_tests/{{page[0]}}" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
+                            {% elif page[0] == 1 %}
+                                <a href="/my_tests/" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
+                            {% endif %}
+                            {% if page[1] %}
+                                <a href="/my_tests/{{page[1]}}" title="Следующая страница" class="btn btn-lpbuilder wave-effect">Следующая страница</a>
+                            {% endif %}
+                        {% else %}
+                        <div class="title-block-container text-center">
+                            <h2>Здесь пока пусто</h2>
+                            <p>Вы пока не сделали ни одного теста, начните создавать новые тесты</p>
+                            <a href="/create_test" title="Создать тест" class="btn btn-lpbuilder wave-effect">Создать тест</a>
                         </div>
-                    </div>
-                    {% endfor %}
-                    <div class="text-center">
-                        {% if page[0] > 1 %}
-                            <a href="/my_tests/{{page[0]}}" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
-                        {% elif page[0] == 1 %}
-                            <a href="/my_tests/" title="Предыдущая страница" class="btn btn-lpbuilder wave-effect">Предыдущая страница</a>
-                        {% endif %}
-                        {% if page[1] %}
-                            <a href="/my_tests/{{page[1]}}" title="Следующая страница" class="btn btn-lpbuilder wave-effect">Следующая страница</a>
                         {% endif %}
                     </div>
                 </div>

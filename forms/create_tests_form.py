@@ -34,18 +34,7 @@ class SecondTestCreateForm(FlaskForm):
 class TestCreateForm(FlaskForm):
     title = StringField('Название', validators=[DataRequired()])
     title_picture = FileField('Картинка')
-    type = SelectField('Тип',
-                       validators=[DataRequired()])
-    language = SelectField('Язык',
-                           validators=[DataRequired()])
     submit = SubmitField('Submit')
-
-
-# class NewTestForm(FlaskForm):
-#     A = StringField('A', validators=[DataRequired()])
-#     B = StringField('B', validators=[DataRequired()])
-#     C = FileField('C', validators=[DataRequired()])
-#     submit = SubmitField('Submit')
 
 
 class NewTestForm(FlaskForm):

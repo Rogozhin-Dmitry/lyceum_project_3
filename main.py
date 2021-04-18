@@ -1,6 +1,7 @@
 import datetime
 import os
 import shutil
+import json
 
 from flask import Flask, render_template, redirect, request, session, abort
 from flask_login import LoginManager
@@ -25,7 +26,6 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-TEST_TYPES = ['first_tests', 'second_tests']
 start_app(app)
 
 
@@ -40,83 +40,15 @@ def main():
     db_sess = db_session.create_session()
     # db_sess.query(User).delete()
     db_sess.query(Category).delete()
-    # db_sess.query(Test).delete()
-    # db_sess.query(FirstTest).delete()
-    # db_sess.query(SecondTest).delete()
-    # db_sess.query(FirstTestPage).delete()
-    # random_user = User(name="Eshly", surname="Dark", email="alpusik2000004@gmail.com")
+
     first_language = Category(name="English")
     second_language = Category(name="Japanese")
-    # random_user.set_password("Pokepark2")
-    # some_page = FirstTestPage()
-    # some_page.image_list = \
-    #     '/static/img/first_test/1/test1.jpg, /static/img/first_test/1/test2.jpg, /static/img/first_test/1/test3.jpg'
-    # some_page.right_image_number = 1
-    # some_page.question = "Какая фапута лучше?"
-    # second_page = FirstTestPage()
-    # some_page.image_list = \
-    #     '/static/img/first_test/1/test4.jpg, /static/img/first_test/1/test5.jpg, /static/img/first_test/1/test6.jpg'
-    # some_page.right_image_number = 2
-    # some_page.question = "Какая картинка лучше?"
-    # third_page = FirstTestPage()
-    # some_page.image_list = \
-    #     '/static/img/first_test/1/test7.png, /static/img/first_test/1/test8.png, /static/img/first_test/1/test9.png'
-    # some_page.right_image_number = 1
-    # some_page.question = "Какой каштан лучше?"
-    # first_test_1 = FirstTest()
-    # first_test_1.title = "something"
-    # first_test_1.language_id = 1
-    # first_test_1.creator = 1
-    # first_test_1.type = 'first_tests'
-    # first_test_1.title_picture = '/static/img/first_test/1/title.jpg'
-    # second_test_1 = FirstTest()
-    # second_test_1.title = "something2"
-    # second_test_1.language_id = 2
-    # second_test_1.creator = 1
-    # second_test_1.type = 'first_tests'
-    # second_page1 = SecondTestPage()
-    # second_page1.words_list = 'no, yes, is'
-    # second_page1.first_sentence = 'My name'
-    # second_page1.second_sentence = 'Lucas'
-    # second_page1.right_word_number = 2
-    # second_page2 = SecondTestPage()
-    # second_page2.words_list = 'no, yes, is'
-    # second_page2.first_sentence = 'My name'
-    # second_page2.second_sentence = 'Lucas'
-    # second_page2.right_word_number = 2
-    # third_test = SecondTest()
-    # third_test.title = "something3"
-    # third_test.language_id = 2
-    # third_test.creator = 1
-    # third_test.type = 'second_tests'
-    # second_page3 = SecondTestPage
-    # second_page3.words_list = 'no, yes, is'
-    # second_page3.first_sentence = 'My name'
-    # second_page3.second_sentence = 'Lucas'
-    # second_page3.right_word_number = 2
-    # first_test_1.pages.append(some_page)
-    # first_test_1.pages.append(second_page)
-    # first_test_1.pages.append(third_page)
-    # third_test.pages.append(second_page1)
-    # third_test.pages.append(second_page2)
-    # third_test.pages.append(second_page3)
-    # db_sess.add(random_user)
-    # db_sess.add(first_test_1)
+    second_language_1 = Category(name="DFGSDFSFDs")
     db_sess.add(first_language)
     db_sess.add(second_language)
-    # db_sess.add(third_test)
-    # db_sess.add(second_test_1)
+    db_sess.add(second_language_1)
     db_sess.commit()
     app.run(port=5001, host='192.168.1.105')
-
-
-class Tests:
-    def __init__(self, name, language, description):
-        self.name = name
-        self.language = language
-        self.description = description
-        db_sess = db_session.create_session()
-        self.author = db_sess.query(User).filter(User.id == 1).first()
 
 
 @app.route('/index/', methods=['GET', 'POST'])
@@ -140,6 +72,11 @@ def index(page_id=1):
     tests = db_sess.query(Test).filter(Test.open == 1).all()
     if len(tests) // 12 + 1 < page_id:
         abort(404)
+    languages = {}
+    for i in db_sess.query(Category).all():
+        languages[i.id] = i.name
+    for i in tests:
+        i.test_language = languages[i.language_id]
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: x.title)
     if len(tests) > 12 * page_id:
@@ -167,10 +104,14 @@ def my_tests(page_id=1):
         user.current_filter = block_filter[str(request.form).split('block_filter')[-1].split("'")[2]]
         db_sess.add(user)
         db_sess.commit()
-    tests = db_sess.query(Test).filter(Test.creator == current_user.get_id()).all()    # 1600 x 900
+    tests = db_sess.query(Test).filter(Test.id.in_([int(i) for i in json.loads(user.user_tests).keys()])).all()
     if len(tests) // 12 + 1 < page_id:
         abort(404)
-
+    languages = {}
+    for i in db_sess.query(Category).all():
+        languages[i.id] = i.name
+    for i in tests:
+        i.test_language = languages[i.language_id]
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: x.title)
 
@@ -203,6 +144,11 @@ def open_user_tests(user_id=1, page_id=1):
     tests = db_sess.query(Test).filter(Test.creator == user_id).all()
     if len(tests) // 12 + 1 < page_id:
         abort(404)
+    languages = {}
+    for i in db_sess.query(Category).all():
+        languages[i.id] = i.name
+    for i in tests:
+        i.test_language = languages[i.language_id]
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
     if len(tests) > 12 * page_id:
@@ -227,21 +173,35 @@ def email():
     return redirect('/')
 
 
-@app.route('/test_site')
-@app.route('/test_site/<int:test_id>')
+@app.route('/test_site', methods=['GET', 'POST'])
+@app.route('/test_site/<int:test_id>', methods=['GET', 'POST'])
 def test_site(test_id=1):
     if not current_user.is_authenticated:
         return redirect('/login')
+    if request.method == 'POST':
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+        user_tests = json.loads(user.user_tests)
+        if request.form['subscribe_button'] == 'Подписаться':
+            user_tests[test_id] = {}
+        else:
+            user_tests.pop(str(test_id))
+        user.user_tests = json.dumps(user_tests)
+        db_sess.add(user)
+        db_sess.commit()
     db_sess = db_session.create_session()
     test = db_sess.query(Test).filter(Test.id == test_id).first()
     if not (test.open or str(test.creator) == str(current_user.get_id())):
         abort(404)
-    user = db_sess.query(User).filter(User.id == test.creator).first()
+    author = db_sess.query(User).filter(User.id == test.creator).first()
     language = db_sess.query(Category).filter(Category.id == test.language_id).first()
     test.test_language = language.name
     test.description = 'Некое описание, что-то там и тд и тп'
-    test.author = user
-    return render_template('test_site.html', test=test)
+    test.author = author
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+    subscribe = str(test.id) in json.loads(user.user_tests)
+    return render_template('test_site.html', test=test, subscribe=subscribe, current_user=current_user)
 
 
 @app.route("/tests_list", methods=['GET', 'POST'])
@@ -515,74 +475,55 @@ def second_test_create(test_id, page_id=None):
 def test_create():
     form = TestCreateForm()
     db_sess = db_session.create_session()
-    categories = db_sess.query(Category).all()
-    used = []
-    for category in categories:
-        if category.name not in used:
-            used.append(category.name)
-    form.language.choices = used
-    form.type.choices = TEST_TYPES
-    if form.validate_on_submit():
-        language_id = db_sess.query(Category).filter(Category.name == form.language.data).first().id
-        if form.type.data == 'first_tests':
-            new_test = FirstTest()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            args = {}
+            for i in str(request.form).split("ImmutableMultiDict([('")[-1].split("')])")[0].split("'), ('"):
+                args[i.split("', '")[0]] = i.split("', '")[1]
+            language_id = db_sess.query(Category).filter(Category.name == args['language']).first().id
+            if args['types'] == 'first_tests':
+                new_test = FirstTest()
+                new_test.type = 'first_tests'
+            else:
+                new_test = SecondTest()
+                new_test.type = 'second_tests'
             new_test.title = form.title.data
             new_test.language_id = language_id
             new_test.creator = current_user.id
-            new_test.type = 'first_tests'
+            new_test.open = args['open'] != 'Только ваш'
             db_sess.add(new_test)
-        elif form.type.data == 'second_tests':
-            new_test = SecondTest()
-            new_test.title = form.title.data
-            new_test.language_id = language_id
-            new_test.creator = current_user.id
-            new_test.type = 'second_tests'
-            db_sess.add(new_test)
-        test_id = str(db_sess.query(Test).filter((Test.title == form.title.data),
-                                                 (Test.user == current_user)).first().id)
-        test_type = str(db_sess.query(Test).filter((Test.title == form.title.data),
-                                                   (Test.user == current_user)).first().type)
-        test = db_sess.query(Test).filter((Test.title == form.title.data),
-                                          (Test.user == current_user)).first()
-        if test_type == "first_tests":
-            if not os.path.exists('static/img/first_test/' + str(test_id)):
-                os.mkdir('static/img/first_test/' + str(test_id))
-                os.mkdir('static/img/first_test/' + str(test_id) + '/title')
-        elif test_type == "second_tests":
-            if not os.path.exists('static/img/second_test/' + str(test_id)):
-                os.mkdir('static/img/second_test/' + str(test_id))
-                os.mkdir('static/img/second_test/' + str(test_id) + '/title')
-        if form.title_picture.data.filename != '':
-            print('yeah')
-            if form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:] not in ["jpg", "bmp",
-                                                                                                          "png",
-                                                                                                          "jpeg",
-                                                                                                          "gif",
-                                                                                                          "cdr", "svg"]:
-                return render_template('test_create.html', form=form)
-            if form.type.data == 'first_tests':
-                form.title_picture.data.save(
-                    'static/img/first_test/' + str(test_id) + '/title/' + form.title_picture.data.filename)
-                test.title_picture = '/' + 'static/img/first_test/' + str(
-                    test_id) + '/title/' + form.title_picture.data.filename
-            elif form.type.data == 'second_tests':
-                form.title_picture.data.save(
-                    'static/img/second_test/' + str(test_id) + '/title/' + form.title_picture.data.filename)
-                test.title_picture = '/' + 'static/img/second_test/' + str(
-                    test_id) + '/title/' + form.title_picture.data.filename
-        db_sess.commit()
-        return redirect('/create_test')
-    return render_template('test_create.html', form=form)
-
-
-@app.route('/created_test_page', methods=['GET', 'POST'])
-def created_test_page():
-    if current_user.is_authenticated:
-        db_sess = db_session.create_session()
-        tests = db_sess.query(Test).filter(Test.creator == current_user.get_id())
-        return render_template('created_test_page.html', tests=tests)
-    else:
-        return redirect("/login")
+            test = db_sess.query(Test).filter((Test.title == form.title.data), (Test.user == current_user)).first()
+            user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+            user_tests = json.loads(user.user_tests)
+            user_tests[test.id] = {}
+            user.user_tests = json.dumps(user_tests)
+            db_sess.add(user)
+            if args == "first_tests":
+                if not os.path.exists('static/img/first_test/' + str(test.id)):
+                    os.mkdir('static/img/first_test/' + str(test.id))
+                    os.mkdir('static/img/first_test/' + str(test.id) + '/title')
+            elif args == "second_tests":
+                if not os.path.exists('static/img/second_test/' + str(test.id)):
+                    os.mkdir('static/img/second_test/' + str(test.id))
+                    os.mkdir('static/img/second_test/' + str(test.id) + '/title')
+            if form.title_picture.data.filename != '':
+                if form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:]\
+                        not in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
+                    return render_template('test_create.html', form=form)
+                if request.form['types'] == 'first_tests':
+                    form.title_picture.data.save(
+                        'static/img/first_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
+                    test.title_picture = '/' + 'static/img/first_test/' + str(
+                        test.id) + '/title/' + form.title_picture.data.filename
+                elif args['types'] == 'second_tests':
+                    form.title_picture.data.save(
+                        'static/img/second_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
+                    test.title_picture = '/' + 'static/img/second_test/' + str(
+                        test.id) + '/title/' + form.title_picture.data.filename
+            db_sess.commit()
+            return redirect('/')
+    return render_template('test_create.html', form=form, languages=[i.name for i in db_sess.query(Category).all()],
+                           types=['first_tests', 'second_tests'])
 
 
 @app.route('/delete_page/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])

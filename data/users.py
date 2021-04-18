@@ -30,6 +30,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
                                       default=datetime.datetime.now)
     score = sqlalchemy.Column(sqlalchemy.Integer,
                               default=0)
+    user_tests = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='{}')
     current_filter = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     passed_test = orm.relation("Test",
                                secondary="association",

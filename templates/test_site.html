@@ -26,7 +26,27 @@
                                         <h2>Язык: {{test.test_language}}</h2>
                                         <h4>{{test.description}}</h4>
                                         <h4>Автор теста <a href="/open_user_tests/{{ test.author.id }}" title="Автор" class="wave-effect">{{ test.author.name }} {{ test.author.surname }}</a></h4>
-                                        <a href="/my_tests" title="Статистика" class="btn btn-lpbuilder wave-effect">Статистика</a>
+                                        {% if test.author.id|string != current_user.get_id() %}
+                                            {% if not subscribe %}
+                                                <form method="post" action="">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-lpbuilder wave-effect" value="Подписаться" name="subscribe_button">Подписаться</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            {% else %}
+                                                <form method="post" action="">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <button type="submit" class="btn btn-lpbuilder wave-effect" value="Отписаться" name="subscribe_button">Отписаться</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            {% endif %}
+                                        {% else %}
+                                            <a href="/my_tests" title="Мои тесты" class="btn btn-lpbuilder wave-effect">Мои тесты</a>
+                                        {% endif %}
                                         <h1>________________________________</h1>
                                     </div>
                                 </div>
