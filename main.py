@@ -38,7 +38,6 @@ def load_user(user_id):
 def main():
     db_session.global_init("db/site_data.db")
     db_sess = db_session.create_session()
-    # db_sess.query(User).delete()
     db_sess.query(Category).delete()
 
     first_language = Category(name="English")
@@ -141,7 +140,7 @@ def open_user_tests(user_id=1, page_id=1):
         user.current_filter = block_filter[str(request.form).split('block_filter')[-1].split("'")[2]]
         db_sess.add(user)
         db_sess.commit()
-    tests = db_sess.query(Test).filter(Test.creator == user_id).all()
+    tests = db_sess.query(Test).filter(Test.creator == user_id).filter(Test.open == 1).all()
     if len(tests) // 12 + 1 < page_id:
         abort(404)
     languages = {}
@@ -196,279 +195,273 @@ def test_site(test_id=1):
     author = db_sess.query(User).filter(User.id == test.creator).first()
     language = db_sess.query(Category).filter(Category.id == test.language_id).first()
     test.test_language = language.name
-    test.description = 'Некое описание, что-то там и тд и тп'
     test.author = author
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
     subscribe = str(test.id) in json.loads(user.user_tests)
     return render_template('test_site.html', test=test, subscribe=subscribe, current_user=current_user)
 
-
-@app.route("/tests_list", methods=['GET', 'POST'])
-def test_list():
-    form = TestForm()
-    db_sess = db_session.create_session()
-    categories = db_sess.query(Category).all()
-    used = ['all']
-    for category in categories:
-        if category.name not in used:
-            used.append(category.name)
-    form.languages.choices = used
-    if request.method == "GET":
-        tests = db_sess.query(Test).all()
-        return render_template("tests_list.html", form=form, tests=tests)
-    if form.validate_on_submit():
-        now_language = form.languages.data
-        if now_language == "all":
-            tests = db_sess.query(Test).all()
-        else:
-            tests = db_sess.query(Test).filter(Test.language_id == used.index(now_language))
-        return render_template("tests_list.html", form=form, tests=tests)
-
-
-@app.route('/first_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
-def first_test(user_id, page_number):
-    db_sess = db_session.create_session()
-    test = db_sess.query(FirstTest).filter(FirstTest.id == user_id).first()
-    form = FirstTestForm()
-    current_page = test.pages[page_number - 1]
-    question = current_page.question
-    images_list = []
-    for image in current_page.image_list.split(', '):
-        images_list.append(image)
-    form.images.choices = images_list
-    if page_number == 1:
-        session['total_score'] = 0
-    if form.validate_on_submit():
-        if page_number == len(test.pages):
-            score = session.get('total_score', 0)
-            if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
-                session['total_score'] = score + 10
-            return redirect('/test_succeed/' + str(user_id))
-        else:
-            if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
-                score = session.get('total_score', 0)
-                session['total_score'] = score + 10
-            return redirect('/first_tests/' + str(user_id) + '/' + str(page_number + 1))
-    return render_template('first_test.html', form=form, question=question)
-
-
-@app.route('/second_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
-def second_test(user_id, page_number):
-    db_sess = db_session.create_session()
-    test = db_sess.query(SecondTest).filter(SecondTest.id == user_id).first()
-    form = SecondTestForm()
-    current_page = test.pages[page_number - 1]
-    first_sentence, second_sentence = current_page.first_sentence, current_page.second_sentence
-    words_list = current_page.words_list.split(', ')
-    form.words.choices = words_list
-    if page_number == 1:
-        session['total_score'] = 0
-    if form.validate_on_submit():
-        if page_number == len(test.pages):
-            score = session.get('total_score', 0)
-            if current_page.words_list.split(', ').index(form.words.data) == current_page.right_word_number:
-                session['total_score'] = score + 10
-            return redirect('/test_succeed/' + str(user_id))
-        else:
-            if current_page.words_list.split(', ').index(form.words.data) == current_page.right_word_number:
-                score = session.get('total_score', 0)
-                session['total_score'] = score + 10
-            return redirect('/second_tests/' + str(user_id) + '/' + str(page_number + 1))
-    return render_template('second_test.html', form=form, first_sentence=first_sentence,
-                           second_sentence=second_sentence)
-
-
-@app.route('/test_title/<int:id>')
-def test_title(user_id):
-    db_sess = db_session.create_session()
-    test = db_sess.query(Test).filter(Test.id == user_id).first()
-    return render_template('test_title.html', test=test)
-
-
-@app.route('/test_succeed/<int:id>')
-def test_succeed(user_id):
-    score = session.get('total_score', 0)
-    session['total_score'] = 0
-    db_sess = db_session.create_session()
-    test = db_sess.query(FirstTest).filter(FirstTest.id == user_id).first()
-    return render_template('test_succeed.html', test=test, score=score)
-
-
-@app.route('/first_test_create/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
-@app.route('/first_test_create/<int:test_id>', methods=['GET', 'POST'])
-def first_test_create(test_id, page_id=None):
-    if not os.path.exists('static/img/users/' + str(current_user.id) + '/first_test_create_stack'):
-        os.mkdir('static/img/users/' + str(current_user.id) + '/first_test_create_stack')
-    form = NewTestForm()
-    current_length = session.get('current_first_test_length', 2)
-    current_images = session.get('current_images_stack', [])
-    new_choices = [str(i + 1) for i in range(current_length)]
-    form.right_image_choosing.choices = new_choices
-    if request.method == "GET":
-        if page_id is not None:
-            db_sess = db_session.create_session()
-            current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
-            session['current_first_test_length'] = len(current_page.image_list.split(', '))
-            while len(form.images.entries) != len(current_page.image_list.split(', ')):
-                form.images.append_entry(PictureSlot())
-            session['current_images_stack'] = current_page.image_list.split(', ')
-            current_images = session.get('current_images_stack', [])
-            form.question.data = current_page.question
-            new_choices = [str(i + 1) for i in range(len(current_page.image_list.split(', ')))]
-            form.right_image_choosing.choices = new_choices
-            form.right_image_choosing.data = str(current_page.right_image_number)
-    if request.method == "POST":
-        session['current_som_test_length'] = session.get('current_som_test_length', 3) + 1
-        if 'over' in request.form:
-            images_list = session.get('current_images_stack', [])
-            if '' in images_list or len(images_list) == 0:
-                return render_template('test.html', form=form, images=images_list, message='не все картинки заполнены')
-            if form.right_image_choosing.data is None:
-                return render_template('test.html', form=form, images=images_list, message='Не выбрана верная картинка')
-            db_sess = db_session.create_session()
-            current_test = db_sess.query(FirstTest).filter(FirstTest.id == test_id).first()
-            session['current_images_stack'] = []
-            for i in range(len(images_list)):
-                if images_list[i][1:] != 'static/img/first_test/' + str(test_id) + '/' + images_list[i][
-                                                                                         images_list[i].rfind(
-                                                                                             '/') + 1:]:
-                    shutil.copy(images_list[i][1:],
-                                'static/img/first_test/' + str(test_id) + '/' + images_list[i][
-                                                                                images_list[i].rfind('/') + 1:])
-                images_list[i] = '/static/img/first_test/' + str(test_id) + '/' + images_list[i][
-                                                                                  images_list[i].rfind('/') + 1:]
-            pages_now_images = os.listdir('static/img/first_test/' + str(test_id))
-            for image in pages_now_images:
-                if '/static/img/first_test/' + str(test_id) + '/' + image not in images_list:
-                    os.remove('static/img/first_test/' + str(test_id) + '/' + image)
-            images_list = ', '.join(images_list)
-            if page_id is None:
-                new_page = FirstTestPage()
-                new_page.question = form.question.data
-                new_page.right_image_number = int(form.right_image_choosing.data)
-                new_page.image_list = images_list
-                current_test.pages.append(new_page)
-                db_sess.add(new_page)
-            else:
-                new_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
-                new_page.question = form.question.data
-                new_page.right_image_number = int(form.right_image_choosing.data)
-                new_page.image_list = images_list
-            db_sess.commit()
-            shutil.rmtree('static/img/users/' + str(current_user.id) + '/first_test_create_stack')
-            return redirect('/test_page_creation/' + str(test_id))
-        elif 'right' in request.form:
-            print('yeah')
-            current_length = session.get('current_first_test_length', 2)
-            if current_length < 5:
-                session['current_first_test_length'] = current_length + 1
-                current_length = session.get('current_first_test_length', 2)
-                form.images.append_entry(PictureSlot())
-            form.right_image_choosing.choices = [str(i + 1) for i in range(current_length)]
-        elif 'left' in request.form:
-            current_length = session.get('current_first_test_length', 2)
-            if current_length > 2:
-                session['current_first_test_length'] = current_length - 1
-                current_length = session.get('current_first_test_length', 2)
-                del form.images.entries[-1]
-                del session['current_images_stack'][-1]
-            form.right_image_choosing.choices = [str(i + 1) for i in range(current_length)]
-        else:
-            images_list = []
-            for image in form.images.entries:
-                if image.slot.data.filename != '':
-                    if image.slot.data.filename[image.slot.data.filename.index('.') + 1:] not in ["jpg", "bmp", "png",
-                                                                                                  "jpeg",
-                                                                                                  "gif",
-                                                                                                  "cdr", "svg"]:
-                        return render_template('test.html', form=form, message='Непподдерживаемый формат файла')
-                    image.slot.data.save('static/img/users/' + str(current_user.id) + '/first_test_create_stack/' +
-                                         image.slot.data.filename)
-                    images_list.append('/static/img/users/' + str(
-                        current_user.id) + '/first_test_create_stack/' + image.slot.data.filename)
-                else:
-                    images_list.append('')
-            for i in range(len(images_list)):
-                current_images = session.get('current_images_stack', [])
-                if i == len(current_images):
-                    session['current_images_stack'].append('')
-                if images_list[i] != '':
-                    session['current_images_stack'][i] = images_list[i]
-            current_images = session.get('current_images_stack', [])
-        return render_template('test.html', form=form, images=current_images)
-    return render_template('test.html', form=form, images=current_images)
-
-
-@app.route('/second_test_create/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
-@app.route('/second_test_create/<int:test_id>', methods=['GET', 'POST'])
-def second_test_create(test_id, page_id=None):
-    form = SecondTestCreateForm()
-    if request.method == "GET":
-        if page_id is not None:
-            db_sess = db_session.create_session()
-            current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
-            session['current_second_test_length'] = len(current_page.words_list.split(', '))
-            while len(form.words.entries) != len(current_page.words_list.split(', ')):
-                form.words.append_entry(WordSlot())
-            count = 0
-            for word in form.words.entries:
-                word.slot.data = current_page.words_list.split(', ')[count]
-                count = count + 1
-            form.first_sentence.data = current_page.first_sentence
-            form.second_sentence.data = current_page.second_sentence
-            new_choices = [str(i + 1) for i in range(len(current_page.words_list.split(', ')))]
-            form.right_word_choosing.choices = new_choices
-            form.right_word_choosing.data = str(current_page.right_word_number)
-        else:
-            current_length = session.get('current_second_test_length', 2)
-            new_choices = [str(i + 1) for i in range(current_length)]
-            form.right_word_choosing.choices = new_choices
-    if request.method == "POST":
-        if 'right' in request.form:
-            current_length = session.get('current_second_test_length', 2)
-            if current_length < 5:
-                session['current_second_test_length'] = current_length + 1
-                current_length = session.get('current_second_test_length', 2)
-                print(current_length, 'from_right')
-                form.words.append_entry(WordSlot())
-            form.right_word_choosing.choices = [str(i + 1) for i in range(current_length)]
-        if 'left' in request.form:
-            current_length = session.get('current_second_test_length', 2)
-            if current_length > 2:
-                session['current_second_test_length'] = current_length - 1
-                current_length = session.get('current_second_test_length', 2)
-                del form.words.entries[-1]
-            form.right_word_choosing.choices = [str(i + 1) for i in range(current_length)]
-        elif 'submit' in request.form:
-            current_length = session.get('current_second_test_length', 2)
-            new_choices = [str(i + 1) for i in range(current_length)]
-            form.right_word_choosing.choices = new_choices
-            if form.right_word_choosing.data is None:
-                return render_template('second_test_create.html', form=form, message='Не выбрано верное слово')
-            db_sess = db_session.create_session()
-            current_test = db_sess.query(SecondTest).filter(SecondTest.id == test_id).first()
-            words_list = []
-            for word in form.words.entries:
-                words_list.append(word.slot.data)
-            words_list = ', '.join(words_list)
-            if page_id is None:
-                new_page = SecondTestPage()
-                new_page.first_sentence = form.first_sentence.data
-                new_page.second_sentence = form.second_sentence.data
-                new_page.words_list = words_list
-                new_page.right_word_number = int(form.right_word_choosing.data)
-                current_test.pages.append(new_page)
-                db_sess.add(new_page)
-            else:
-                new_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
-                new_page.first_sentence = form.first_sentence.data
-                new_page.second_sentence = form.second_sentence.data
-                new_page.words_list = words_list
-                new_page.right_word_number = int(form.right_word_choosing.data)
-            db_sess.commit()
-            return redirect('/test_page_creation/' + str(test_id))
-    return render_template('second_test_create.html', form=form)
+#
+# @app.route("/tests_list", methods=['GET', 'POST'])
+# def test_list():
+#     form = TestForm()
+#     db_sess = db_session.create_session()
+#     categories = db_sess.query(Category).all()
+#     used = ['all']
+#     for category in categories:
+#         if category.name not in used:
+#             used.append(category.name)
+#     form.languages.choices = used
+#     if request.method == "GET":
+#         tests = db_sess.query(Test).all()
+#         return render_template("tests_list.html", form=form, tests=tests)
+#     if form.validate_on_submit():
+#         now_language = form.languages.data
+#         if now_language == "all":
+#             tests = db_sess.query(Test).all()
+#         else:
+#             tests = db_sess.query(Test).filter(Test.language_id == used.index(now_language))
+#         return render_template("tests_list.html", form=form, tests=tests)
+#
+#
+# @app.route('/first_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
+# def first_test(user_id, page_number):
+#     db_sess = db_session.create_session()
+#     test = db_sess.query(FirstTest).filter(FirstTest.id == user_id).first()
+#     form = FirstTestForm()
+#     current_page = test.pages[page_number - 1]
+#     question = current_page.question
+#     images_list = []
+#     for image in current_page.image_list.split(', '):
+#         images_list.append(image)
+#     form.images.choices = images_list
+#     if page_number == 1:
+#         session['total_score'] = 0
+#     if form.validate_on_submit():
+#         if page_number == len(test.pages):
+#             score = session.get('total_score', 0)
+#             if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
+#                 session['total_score'] = score + 10
+#             return redirect('/test_succeed/' + str(user_id))
+#         else:
+#             if current_page.image_list.split(', ').index(form.images.data) == current_page.right_image_number:
+#                 score = session.get('total_score', 0)
+#                 session['total_score'] = score + 10
+#             return redirect('/first_tests/' + str(user_id) + '/' + str(page_number + 1))
+#     return render_template('first_test.html', form=form, question=question)
+#
+#
+# @app.route('/second_tests/<int:id>/<int:page_number>', methods=['GET', 'POST'])
+# def second_test(user_id, page_number):
+#     db_sess = db_session.create_session()
+#     test = db_sess.query(SecondTest).filter(SecondTest.id == user_id).first()
+#     form = SecondTestForm()
+#     current_page = test.pages[page_number - 1]
+#     first_sentence, second_sentence = current_page.first_sentence, current_page.second_sentence
+#     words_list = current_page.words_list.split(', ')
+#     form.words.choices = words_list
+#     if page_number == 1:
+#         session['total_score'] = 0
+#     if form.validate_on_submit():
+#         if page_number == len(test.pages):
+#             score = session.get('total_score', 0)
+#             if current_page.words_list.split(', ').index(form.words.data) == current_page.right_word_number:
+#                 session['total_score'] = score + 10
+#             return redirect('/test_succeed/' + str(user_id))
+#         else:
+#             if current_page.words_list.split(', ').index(form.words.data) == current_page.right_word_number:
+#                 score = session.get('total_score', 0)
+#                 session['total_score'] = score + 10
+#             return redirect('/second_tests/' + str(user_id) + '/' + str(page_number + 1))
+#     return render_template('second_test.html', form=form, first_sentence=first_sentence,
+#                            second_sentence=second_sentence)
+#
+#
+# @app.route('/test_succeed/<int:id>')
+# def test_succeed(user_id):
+#     score = session.get('total_score', 0)
+#     session['total_score'] = 0
+#     db_sess = db_session.create_session()
+#     test = db_sess.query(FirstTest).filter(FirstTest.id == user_id).first()
+#     return render_template('test_succeed.html', test=test, score=score)
+#
+#
+# @app.route('/first_test_create/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
+# @app.route('/first_test_create/<int:test_id>', methods=['GET', 'POST'])
+# def first_test_create(test_id, page_id=None):
+#     if not os.path.exists('static/img/users/' + str(current_user.id) + '/first_test_create_stack'):
+#         os.mkdir('static/img/users/' + str(current_user.id) + '/first_test_create_stack')
+#     form = NewTestForm()
+#     current_length = session.get('current_first_test_length', 2)
+#     current_images = session.get('current_images_stack', [])
+#     new_choices = [str(i + 1) for i in range(current_length)]
+#     form.right_image_choosing.choices = new_choices
+#     if request.method == "GET":
+#         if page_id is not None:
+#             db_sess = db_session.create_session()
+#             current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
+#             session['current_first_test_length'] = len(current_page.image_list.split(', '))
+#             while len(form.images.entries) != len(current_page.image_list.split(', ')):
+#                 form.images.append_entry(PictureSlot())
+#             session['current_images_stack'] = current_page.image_list.split(', ')
+#             current_images = session.get('current_images_stack', [])
+#             form.question.data = current_page.question
+#             new_choices = [str(i + 1) for i in range(len(current_page.image_list.split(', ')))]
+#             form.right_image_choosing.choices = new_choices
+#             form.right_image_choosing.data = str(current_page.right_image_number)
+#     if request.method == "POST":
+#         session['current_som_test_length'] = session.get('current_som_test_length', 3) + 1
+#         if 'over' in request.form:
+#             images_list = session.get('current_images_stack', [])
+#             if '' in images_list or len(images_list) == 0:
+#                 return render_template('test.html', form=form,
+#                 images=images_list, message='не все картинки заполнены')
+#             if form.right_image_choosing.data is None:
+#                 return render_template('test.html', form=form,
+#                 images=images_list, message='Не выбрана верная картинка')
+#             db_sess = db_session.create_session()
+#             current_test = db_sess.query(FirstTest).filter(FirstTest.id == test_id).first()
+#             session['current_images_stack'] = []
+#             for i in range(len(images_list)):
+#                 if images_list[i][1:] != 'static/img/first_test/' + str(test_id) + '/' + images_list[i][
+#                                                                                          images_list[i].rfind(
+#                                                                                              '/') + 1:]:
+#                     shutil.copy(images_list[i][1:],
+#                                 'static/img/first_test/' + str(test_id) + '/' + images_list[i][
+#                                                                                 images_list[i].rfind('/') + 1:])
+#                 images_list[i] = '/static/img/first_test/' + str(test_id) + '/' + images_list[i][
+#                                                                                   images_list[i].rfind('/') + 1:]
+#             pages_now_images = os.listdir('static/img/first_test/' + str(test_id))
+#             for image in pages_now_images:
+#                 if '/static/img/first_test/' + str(test_id) + '/' + image not in images_list:
+#                     os.remove('static/img/first_test/' + str(test_id) + '/' + image)
+#             images_list = ', '.join(images_list)
+#             if page_id is None:
+#                 new_page = FirstTestPage()
+#                 new_page.question = form.question.data
+#                 new_page.right_image_number = int(form.right_image_choosing.data)
+#                 new_page.image_list = images_list
+#                 current_test.pages.append(new_page)
+#                 db_sess.add(new_page)
+#             else:
+#                 new_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
+#                 new_page.question = form.question.data
+#                 new_page.right_image_number = int(form.right_image_choosing.data)
+#                 new_page.image_list = images_list
+#             db_sess.commit()
+#             shutil.rmtree('static/img/users/' + str(current_user.id) + '/first_test_create_stack')
+#             return redirect('/test_page_creation/' + str(test_id))
+#         elif 'right' in request.form:
+#             print('yeah')
+#             current_length = session.get('current_first_test_length', 2)
+#             if current_length < 5:
+#                 session['current_first_test_length'] = current_length + 1
+#                 current_length = session.get('current_first_test_length', 2)
+#                 form.images.append_entry(PictureSlot())
+#             form.right_image_choosing.choices = [str(i + 1) for i in range(current_length)]
+#         elif 'left' in request.form:
+#             current_length = session.get('current_first_test_length', 2)
+#             if current_length > 2:
+#                 session['current_first_test_length'] = current_length - 1
+#                 current_length = session.get('current_first_test_length', 2)
+#                 del form.images.entries[-1]
+#                 del session['current_images_stack'][-1]
+#             form.right_image_choosing.choices = [str(i + 1) for i in range(current_length)]
+#         else:
+#             images_list = []
+#             for image in form.images.entries:
+#                 if image.slot.data.filename != '':
+#                     if image.slot.data.filename[image.slot.data.filename.index('.') + 1:] not in ["jpg", "bmp", "png",
+#                                                                                                   "jpeg",
+#                                                                                                   "gif",
+#                                                                                                   "cdr", "svg"]:
+#                         return render_template('test.html', form=form, message='Непподдерживаемый формат файла')
+#                     image.slot.data.save('static/img/users/' + str(current_user.id) + '/first_test_create_stack/' +
+#                                          image.slot.data.filename)
+#                     images_list.append('/static/img/users/' + str(
+#                         current_user.id) + '/first_test_create_stack/' + image.slot.data.filename)
+#                 else:
+#                     images_list.append('')
+#             for i in range(len(images_list)):
+#                 current_images = session.get('current_images_stack', [])
+#                 if i == len(current_images):
+#                     session['current_images_stack'].append('')
+#                 if images_list[i] != '':
+#                     session['current_images_stack'][i] = images_list[i]
+#             current_images = session.get('current_images_stack', [])
+#         return render_template('test.html', form=form, images=current_images)
+#     return render_template('test.html', form=form, images=current_images)
+#
+#
+# @app.route('/second_test_create/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
+# @app.route('/second_test_create/<int:test_id>', methods=['GET', 'POST'])
+# def second_test_create(test_id, page_id=None):
+#     form = SecondTestCreateForm()
+#     if request.method == "GET":
+#         if page_id is not None:
+#             db_sess = db_session.create_session()
+#             current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
+#             session['current_second_test_length'] = len(current_page.words_list.split(', '))
+#             while len(form.words.entries) != len(current_page.words_list.split(', ')):
+#                 form.words.append_entry(WordSlot())
+#             count = 0
+#             for word in form.words.entries:
+#                 word.slot.data = current_page.words_list.split(', ')[count]
+#                 count = count + 1
+#             form.first_sentence.data = current_page.first_sentence
+#             form.second_sentence.data = current_page.second_sentence
+#             new_choices = [str(i + 1) for i in range(len(current_page.words_list.split(', ')))]
+#             form.right_word_choosing.choices = new_choices
+#             form.right_word_choosing.data = str(current_page.right_word_number)
+#         else:
+#             current_length = session.get('current_second_test_length', 2)
+#             new_choices = [str(i + 1) for i in range(current_length)]
+#             form.right_word_choosing.choices = new_choices
+#     if request.method == "POST":
+#         if 'right' in request.form:
+#             current_length = session.get('current_second_test_length', 2)
+#             if current_length < 5:
+#                 session['current_second_test_length'] = current_length + 1
+#                 current_length = session.get('current_second_test_length', 2)
+#                 print(current_length, 'from_right')
+#                 form.words.append_entry(WordSlot())
+#             form.right_word_choosing.choices = [str(i + 1) for i in range(current_length)]
+#         if 'left' in request.form:
+#             current_length = session.get('current_second_test_length', 2)
+#             if current_length > 2:
+#                 session['current_second_test_length'] = current_length - 1
+#                 current_length = session.get('current_second_test_length', 2)
+#                 del form.words.entries[-1]
+#             form.right_word_choosing.choices = [str(i + 1) for i in range(current_length)]
+#         elif 'submit' in request.form:
+#             current_length = session.get('current_second_test_length', 2)
+#             new_choices = [str(i + 1) for i in range(current_length)]
+#             form.right_word_choosing.choices = new_choices
+#             if form.right_word_choosing.data is None:
+#                 return render_template('second_test_create.html', form=form, message='Не выбрано верное слово')
+#             db_sess = db_session.create_session()
+#             current_test = db_sess.query(SecondTest).filter(SecondTest.id == test_id).first()
+#             words_list = []
+#             for word in form.words.entries:
+#                 words_list.append(word.slot.data)
+#             words_list = ', '.join(words_list)
+#             if page_id is None:
+#                 new_page = SecondTestPage()
+#                 new_page.first_sentence = form.first_sentence.data
+#                 new_page.second_sentence = form.second_sentence.data
+#                 new_page.words_list = words_list
+#                 new_page.right_word_number = int(form.right_word_choosing.data)
+#                 current_test.pages.append(new_page)
+#                 db_sess.add(new_page)
+#             else:
+#                 new_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
+#                 new_page.first_sentence = form.first_sentence.data
+#                 new_page.second_sentence = form.second_sentence.data
+#                 new_page.words_list = words_list
+#                 new_page.right_word_number = int(form.right_word_choosing.data)
+#             db_sess.commit()
+#             return redirect('/test_page_creation/' + str(test_id))
+#     return render_template('second_test_create.html', form=form)
 
 
 @app.route('/create_test', methods=['GET', 'POST'])
@@ -507,63 +500,74 @@ def test_create():
                 if not os.path.exists('static/img/second_test/' + str(test.id)):
                     os.mkdir('static/img/second_test/' + str(test.id))
                     os.mkdir('static/img/second_test/' + str(test.id) + '/title')
+            os.mkdir('static/img/first_test/' + str(test.id))
+            os.mkdir('static/img/first_test/' + str(test.id) + '/title/')
             if form.title_picture.data.filename != '':
-                if form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:]\
-                        not in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
-                    return render_template('test_create.html', form=form)
-                if request.form['types'] == 'first_tests':
-                    form.title_picture.data.save(
-                        'static/img/first_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
-                    test.title_picture = '/' + 'static/img/first_test/' + str(
-                        test.id) + '/title/' + form.title_picture.data.filename
-                elif args['types'] == 'second_tests':
-                    form.title_picture.data.save(
-                        'static/img/second_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
-                    test.title_picture = '/' + 'static/img/second_test/' + str(
-                        test.id) + '/title/' + form.title_picture.data.filename
+                if form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:] \
+                        in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
+                    if request.form['types'] == 'first_tests':
+                        form.title_picture.data.save(
+                            'static/img/first_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
+                        test.title_picture = '/' + 'static/img/first_test/' + str(
+                            test.id) + '/title/' + form.title_picture.data.filename
+                    elif args['types'] == 'second_tests':
+                        form.title_picture.data.save(
+                            'static/img/second_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
+                        test.title_picture = '/' + 'static/img/second_test/' + str(
+                            test.id) + '/title/' + form.title_picture.data.filename
+                else:
+                    test.title_picture = '/static/img/second_test/' + str(test.id) \
+                                         + '/title/hero-001-1.jpg'
+                    shutil.copyfile("/static/images/hero/hero-001-1.jpg", '/static/img/second_test/' + str(test.id)
+                                    + '/title/hero-001-1.jpg')
+            else:
+                test.title_picture = '/static/img/second_test/' + str(test.id) \
+                                     + '/title/hero-001-1.jpg'
+                shutil.copyfile("/static/images/hero/hero-001-1.jpg", '/static/img/second_test/' + str(test.id)
+                                + '/title/hero-001-1.jpg')
             db_sess.commit()
             return redirect('/')
     return render_template('test_create.html', form=form, languages=[i.name for i in db_sess.query(Category).all()],
                            types=['first_tests', 'second_tests'])
 
 
-@app.route('/delete_page/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
-def delete_page(test_id, page_id):
-    db_sess = db_session.create_session()
-    current_test = db_sess.query(Test).filter(Test.id == test_id).first()
-    if current_test.type == 'second_tests':
-        current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
-    elif current_test.type == 'first_tests':
-        current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
-    else:
-        current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
-    current_test.pages.remove(current_page)
-    db_sess.delete(current_page)
-    db_sess.commit()
-    return redirect('/test_page_creation/' + str(test_id))
-
-
-@app.route('/delete_test/<int:test_id>', methods=['GET', 'POST'])
-def delete_test(test_id):
-    db_sess = db_session.create_session()
-    current_test = db_sess.query(Test).filter(Test.id == test_id).first()
-    for page in current_test.pages:
-        current_test.pages.remove(page)
-        db_sess.delete(page)
-    db_sess.delete(current_test)
-    db_sess.commit()
-    return redirect('/created_test_page/' + str(current_user.id))
-
-
-@app.route('/test_page_creation')
-def test_page_creation():
-    if current_user.is_authenticated:
-        db_sess = db_session.create_session()
-        current_test = db_sess.query(Test).filter(Test.id == current_user.get_id()).first()
-        pages_list = current_test.pages
-        return render_template('test_page_creation.html', pages=pages_list, test=current_test)
-    else:
-        return redirect("/login")
+# @app.route('/delete_page/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
+# def delete_page(test_id, page_id):
+#     db_sess = db_session.create_session()
+#     current_test = db_sess.query(Test).filter(Test.id == test_id).first()
+#     if current_test.type == 'second_tests':
+#         current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
+#     elif current_test.type == 'first_tests':
+#         current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
+#     else:
+#         current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
+#     current_test.pages.remove(current_page)
+#     db_sess.delete(current_page)
+#     db_sess.commit()
+#     return redirect('/test_page_creation/' + str(test_id))
+#
+#
+# @app.route('/delete_test/<int:test_id>', methods=['GET', 'POST'])
+# def delete_test(test_id):
+#     db_sess = db_session.create_session()
+#     current_test = db_sess.query(Test).filter(Test.id == test_id).first()
+#     for page in current_test.pages:
+#         current_test.pages.remove(page)
+#         db_sess.delete(page)
+#     db_sess.delete(current_test)
+#     db_sess.commit()
+#     return redirect('/created_test_page/' + str(current_user.id))
+#
+#
+# @app.route('/test_page_creation')
+# def test_page_creation():
+#     if current_user.is_authenticated:
+#         db_sess = db_session.create_session()
+#         current_test = db_sess.query(Test).filter(Test.id == current_user.get_id()).first()
+#         pages_list = current_test.pages
+#         return render_template('test_page_creation.html', pages=pages_list, test=current_test)
+#     else:
+#         return redirect("/login")
 
 
 @app.route("/profile")
