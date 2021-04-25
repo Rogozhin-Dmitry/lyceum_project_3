@@ -1,73 +1,55 @@
 {% extends "main_form_design.html" %}
 
 {% block content %}
-    <div id="special-section-3" class="special-section grey-section">
+    <div id="special-section-3" class="special-section">
         <div class="section-container">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 form-block account-form-block signinform">
                         <div class="form-block-container">
-                            <form action="" method="post" class="item" enctype="multipart/form-data">
-                                {{ form.hidden_tag() }}
+                            <form action="" method="post" class="item">
                                 <div class="col-md-12">
                                     <div class="form-group text-center">
-                                        <a href="/" class="navbar-brand" title="LPB">
-                                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="LPB Logo">
+                                        <a href="/" class="navbar-brand" title="">
+                                            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
                                         </a>
-                                        <h2>Создать тест</h2>
+                                        <h2>Результат теста</h2>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        {{ form.title(class="form-control", type="title") }}
-                                        <label>Название</label>
+                                    <div class="form-group text-center">
+                                        <h3>ваш результат</h3>
+                                        <h3>{{score}}/{{pages}}</h3>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        {{ form.title_picture() }}
+                                    <div class="form-group text-center">
+                                        <h3>ваш рекорд {{max_score}}</h3>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Тип теста</label>
-                                        <select class="lpbuilder-select" style="display: none;" name="language">
-                                            <option value="{{ languages[0] }}" selected="">{{ languages[0] }}</option>
-                                            {% for language in languages[1:] %}
-                                                <option value="{{ language }}">{{ language }}</option>
+                                    <div class="text-center">
+                                        <table border="1" width="100%">
+                                            <caption>Ошибки в тестированнии</caption>
+                                            <tr>
+                                                <th class="text-center"> Правильный вариант </th>
+                                                <th class="text-center"> Ваш вариант </th>
+                                            </tr>
+                                            {% for i in error_table %}
+                                                <tr><td><h4>{{i[0]}}</h4></td>
+                                                    <td><h4>{{i[1]}}</h4></td></tr>
                                             {% endfor %}
-                                        </select>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group text-center">
+                                        <h3> </h3>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>Язык теста</label>
-                                        <select class="lpbuilder-select" style="display: none;" name="types">
-                                            <option value="{{ types[0] }}" selected="">{{ types[0] }}</option>
-                                            {% for type in types[1:] %}
-                                                <option value="{{ type }}">{{ type }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label>Тип доступа к тесту</label>
-                                        <select class="lpbuilder-select" style="display: none;" name="open">
-                                            <option value="Общий доступ" selected="">Общий доступ</option>
-                                            <option value="Только ваш">Только ваш</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        {{ form.description(class="form-control") }}
-                                        <label>Небольшое описание</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <button type="submit" class="btn btn-lpbuilder wave-effect">Продолжить</button>
+                                        <a href="/test_site/{{test_id}}" title="Завершить прохождение этапа" class="btn btn-lpbuilder wave-effect">Завершить прохождение этапа</a>
                                     </div>
                                 </div>
                             </form>

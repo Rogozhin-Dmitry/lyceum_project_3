@@ -35,7 +35,7 @@
                                 <div class="content-block-container" style="height: 333px;">
                                     <div class="image-block">
                                         <div class="image-block-container">
-                                            <img src="{{ test.title_picture }}" alt="Image Block">
+                                            <img src="{{ url_for('static', filename=test.title_picture) }}" alt="Image Block">
                                             <a href="/test_site/{{ test.id }}" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
                                         </div>
                                     </div>

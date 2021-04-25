@@ -31,6 +31,7 @@ class Test(SqlAlchemyBase, SerializerMixin):
     open = sqlalchemy.Column(sqlalchemy.Boolean, nullable=True,
                              default=False)
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    data = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='{}')
 
     language = orm.relation('Category')
     user = orm.relation('User')

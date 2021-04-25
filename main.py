@@ -2,6 +2,7 @@ import datetime
 import os
 import shutil
 import json
+import random
 
 from flask import Flask, render_template, redirect, request, session, abort
 from flask_login import LoginManager
@@ -9,6 +10,9 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 from data import db_session
 from data.categories import Category
+from data.created_test import CreatedTest
+from data.temporary_third_test_create import TemporaryThirdTestCreate
+from data.temporary_third_test import TemporaryThirdTest
 from data.tests import Test, FirstTest, SecondTest
 from data.tests_pages import FirstTestPage, SecondTestPage
 from data.users import User
@@ -19,14 +23,12 @@ from forms.list_of_tests import TestForm
 from forms.tests_forms import FirstTestForm, SecondTestForm
 from forms.user import RegisterForm, LoginForm, ChangeForm, SmallLoginForm
 
-app = Flask(__name__)
-app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
-    days=365
-)
+application = Flask(__name__)
+application.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
 login_manager = LoginManager()
-login_manager.init_app(app)
-app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-start_app(app)
+login_manager.init_app(application)
+application.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+start_app(application)
 
 
 @login_manager.user_loader
@@ -47,13 +49,20 @@ def main():
     db_sess.add(second_language)
     db_sess.add(second_language_1)
     db_sess.commit()
-    app.run(port=5001, host='192.168.1.105')
+    application.run(port=5001, host='192.168.1.105')
 
 
-@app.route('/index/', methods=['GET', 'POST'])
-@app.route('/index/<int:page_id>', methods=['GET', 'POST'])
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/<int:page_id>', methods=['GET', 'POST'])
+@application.route('/email', methods=['POST'])
+def email():
+    if request.method == 'POST':
+        print(request.form['email'])
+    return redirect('/')
+
+
+@application.route('/index/', methods=['GET', 'POST'])
+@application.route('/index/<int:page_id>', methods=['GET', 'POST'])
+@application.route('/', methods=['GET', 'POST'])
+@application.route('/<int:page_id>', methods=['GET', 'POST'])
 def index(page_id=1):
     session['current_second_test_length'] = 2
     session['current_first_test_length'] = 2
@@ -90,8 +99,8 @@ def index(page_id=1):
                            current_filter=user.current_filter, page=[previous_page_id, next_page_id])
 
 
-@app.route('/my_tests/', methods=['GET', 'POST'])
-@app.route('/my_tests/<int:page_id>', methods=['GET', 'POST'])
+@application.route('/my_tests/', methods=['GET', 'POST'])
+@application.route('/my_tests/<int:page_id>', methods=['GET', 'POST'])
 def my_tests(page_id=1):
     if not current_user.is_authenticated:
         return redirect('/login')
@@ -126,9 +135,9 @@ def my_tests(page_id=1):
                            current_filter=user.current_filter, page=[previous_page_id, next_page_id])
 
 
-@app.route('/open_user_tests/', methods=['GET', 'POST'])
-@app.route('/open_user_tests/<int:user_id>/', methods=['GET', 'POST'])
-@app.route('/open_user_tests/<int:user_id>/<int:page_id>', methods=['GET', 'POST'])
+@application.route('/open_user_tests/', methods=['GET', 'POST'])
+@application.route('/open_user_tests/<int:user_id>/', methods=['GET', 'POST'])
+@application.route('/open_user_tests/<int:user_id>/<int:page_id>', methods=['GET', 'POST'])
 def open_user_tests(user_id=1, page_id=1):
     if not current_user.is_authenticated:
         return redirect('/login')
@@ -165,15 +174,8 @@ def open_user_tests(user_id=1, page_id=1):
                            current_filter=user.current_filter, page=[previous_page_id, next_page_id], author=author)
 
 
-@app.route('/email', methods=['POST'])
-def email():
-    if request.method == 'POST':
-        print(request.form['email'])
-    return redirect('/')
-
-
-@app.route('/test_site', methods=['GET', 'POST'])
-@app.route('/test_site/<int:test_id>', methods=['GET', 'POST'])
+@application.route('/test_site', methods=['GET', 'POST'])
+@application.route('/test_site/<int:test_id>', methods=['GET', 'POST'])
 def test_site(test_id=1):
     if not current_user.is_authenticated:
         return redirect('/login')
@@ -181,10 +183,10 @@ def test_site(test_id=1):
         db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
         user_tests = json.loads(user.user_tests)
-        if request.form['subscribe_button'] == 'Подписаться':
-            user_tests[test_id] = {}
-        else:
+        if request.form['subscribe_button'] == 'Отписаться':
             user_tests.pop(str(test_id))
+        else:
+            user_tests[test_id] = {1: {}, 2: {}, 3: {}, 4: {}}
         user.user_tests = json.dumps(user_tests)
         db_sess.add(user)
         db_sess.commit()
@@ -201,7 +203,7 @@ def test_site(test_id=1):
     subscribe = str(test.id) in json.loads(user.user_tests)
     return render_template('test_site.html', test=test, subscribe=subscribe, current_user=current_user)
 
-#
+
 # @app.route("/tests_list", methods=['GET', 'POST'])
 # def test_list():
 #     form = TestForm()
@@ -462,75 +464,8 @@ def test_site(test_id=1):
 #             db_sess.commit()
 #             return redirect('/test_page_creation/' + str(test_id))
 #     return render_template('second_test_create.html', form=form)
-
-
-@app.route('/create_test', methods=['GET', 'POST'])
-def test_create():
-    form = TestCreateForm()
-    db_sess = db_session.create_session()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            args = {}
-            for i in str(request.form).split("ImmutableMultiDict([('")[-1].split("')])")[0].split("'), ('"):
-                args[i.split("', '")[0]] = i.split("', '")[1]
-            language_id = db_sess.query(Category).filter(Category.name == args['language']).first().id
-            if args['types'] == 'first_tests':
-                new_test = FirstTest()
-                new_test.type = 'first_tests'
-            else:
-                new_test = SecondTest()
-                new_test.type = 'second_tests'
-            new_test.title = form.title.data
-            new_test.language_id = language_id
-            new_test.creator = current_user.id
-            new_test.open = args['open'] != 'Только ваш'
-            new_test.description = form.description.data
-            db_sess.add(new_test)
-            test = db_sess.query(Test).filter((Test.title == form.title.data), (Test.user == current_user)).first()
-            user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
-            user_tests = json.loads(user.user_tests)
-            user_tests[test.id] = {}
-            user.user_tests = json.dumps(user_tests)
-            db_sess.add(user)
-            if args == "first_tests":
-                if not os.path.exists('static/img/first_test/' + str(test.id)):
-                    os.mkdir('static/img/first_test/' + str(test.id))
-                    os.mkdir('static/img/first_test/' + str(test.id) + '/title')
-            elif args == "second_tests":
-                if not os.path.exists('static/img/second_test/' + str(test.id)):
-                    os.mkdir('static/img/second_test/' + str(test.id))
-                    os.mkdir('static/img/second_test/' + str(test.id) + '/title')
-            os.mkdir('static/img/first_test/' + str(test.id))
-            os.mkdir('static/img/first_test/' + str(test.id) + '/title/')
-            if form.title_picture.data.filename != '':
-                if form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:] \
-                        in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
-                    if request.form['types'] == 'first_tests':
-                        form.title_picture.data.save(
-                            'static/img/first_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
-                        test.title_picture = '/' + 'static/img/first_test/' + str(
-                            test.id) + '/title/' + form.title_picture.data.filename
-                    elif args['types'] == 'second_tests':
-                        form.title_picture.data.save(
-                            'static/img/second_test/' + str(test.id) + '/title/' + form.title_picture.data.filename)
-                        test.title_picture = '/' + 'static/img/second_test/' + str(
-                            test.id) + '/title/' + form.title_picture.data.filename
-                else:
-                    test.title_picture = '/static/img/second_test/' + str(test.id) \
-                                         + '/title/hero-001-1.jpg'
-                    shutil.copyfile("/static/images/hero/hero-001-1.jpg", '/static/img/second_test/' + str(test.id)
-                                    + '/title/hero-001-1.jpg')
-            else:
-                test.title_picture = '/static/img/second_test/' + str(test.id) \
-                                     + '/title/hero-001-1.jpg'
-                shutil.copyfile("/static/images/hero/hero-001-1.jpg", '/static/img/second_test/' + str(test.id)
-                                + '/title/hero-001-1.jpg')
-            db_sess.commit()
-            return redirect('/')
-    return render_template('test_create.html', form=form, languages=[i.name for i in db_sess.query(Category).all()],
-                           types=['first_tests', 'second_tests'])
-
-
+#
+#
 # @app.route('/delete_page/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
 # def delete_page(test_id, page_id):
 #     db_sess = db_session.create_session()
@@ -570,7 +505,214 @@ def test_create():
 #         return redirect("/login")
 
 
-@app.route("/profile")
+@application.route('/third_test', methods=['GET', 'POST'])
+@application.route('/third_test/<int:test_id>', methods=['GET', 'POST'])
+@application.route('/third_test/<int:test_id>/<int:test_type>', methods=['GET', 'POST'])
+def third_test(test_id=1, test_type=1):
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    db_sess = db_session.create_session()
+    test_temp = db_sess.query(TemporaryThirdTest).filter(TemporaryThirdTest.user_id == current_user.get_id()).filter(
+        TemporaryThirdTest.test_id == test_id).first()
+    if not test_temp:
+        user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+        test = db_sess.query(Test).filter((Test.id == test_id)).first()
+        if not test or str(test.id) not in json.loads(user.user_tests):
+            abort(404)
+        test_temp = TemporaryThirdTest()
+        test_temp.user_id = current_user.get_id()
+        test_temp.test_id = test.id
+        test_temp.test_type = test_type
+        if test_type == 1:
+            test_temp.data = test.data
+        elif test_type == 2:
+            test_data = json.loads(test.data)
+            test_data_1 = {}
+            j = 1
+            test_data_keys = list(test_data.keys())
+            random.shuffle(test_data_keys)
+            for i in test_data_keys:
+                test_data_1[j] = test_data[i]
+                j += 1
+            test_temp.data = json.dumps(test_data_1)
+        elif test_type == 3:
+            test_data = json.loads(test.data)
+            test_data_1 = {}
+            for i in test_data:
+                test_data_1[i] = (test_data[i][1], test_data[i][0])
+            test_temp.data = json.dumps(test_data_1)
+        else:
+            test_data = json.loads(test.data)
+            test_data_1 = {}
+            j = 1
+            test_data_keys = list(test_data.keys())
+            random.shuffle(test_data_keys)
+            for i in test_data_keys:
+                test_data_1[j] = (test_data[i][1], test_data[i][0])
+                j += 1
+            test_temp.data = json.dumps(test_data_1)
+        db_sess.add(test_temp)
+        db_sess.commit()
+    else:
+        if request.method == "POST":
+            result_data = json.loads(test_temp.result_data)
+            result_data[str(test_temp.selected_page)] = request.form['answer']
+            test_temp.result_data = json.dumps(result_data)
+            test_temp.selected_page += 1
+            data = json.loads(test_temp.data)
+            if test_temp.selected_page > len(list(data.keys())):
+                score = 0
+                error_table = []
+                for i in data:
+                    if data[i][1].lower() == result_data[i].lower():
+                        score += 1
+                    else:
+                        error_table.append([data[i][0].lower(), result_data[i].lower()])
+                user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+                user_data = json.loads(user.user_tests)
+                if 'max_count' in user_data[str(test_id)][str(test_temp.test_type)] \
+                        and int(user_data[str(test_id)][str(test_temp.test_type)]['max_count']) > score:
+                    max_score = int(user_data[str(test_id)][str(test_temp.test_type)]['max_count'])
+                else:
+                    user_data[str(test_id)][str(test_temp.test_type)]['max_count'] = score
+                    user.user_tests = json.dumps(user_data)
+                    max_score = score
+                db_sess.delete(test_temp)
+                db_sess.commit()
+                return render_template('test_result.html', score=score, test_id=test_id, max_score=max_score,
+                                       pages=len(list(data.keys())), error_table=error_table)
+            db_sess.commit()
+    return render_template('third_test.html', name=json.loads(test_temp.data)[str(test_temp.selected_page)][0])
+
+
+@application.route('/third_test_create', methods=['GET', 'POST'])
+def third_test_create():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    db_sess = db_session.create_session()
+    test = db_sess.query(CreatedTest).filter((CreatedTest.creator == current_user.get_id())).first()
+    if not test:
+        return redirect('/create_test')
+    temporary = db_sess.query(TemporaryThirdTestCreate).filter((TemporaryThirdTestCreate.test_id == test.id)).first()
+    if not (test and test.type == 'third_tests'):
+        redirect('/create_test')
+    if request.method == "POST":
+        args = {}
+        for i in str(request.form).split("ImmutableMultiDict([('")[-1].split("')])")[0].split("'), ('"):
+            args[i.split("', '")[0]] = i.split("', '")[1]
+        data = json.loads(temporary.data)
+        for i in args:
+            if i not in ['append', 'delete', 'create']:
+                data[i] = args[i]
+        temporary.data = json.dumps(data)
+        if 'append' in args:
+            if temporary.count_of_tr != 50:
+                temporary.count_of_tr += 5
+            db_sess.commit()
+        elif 'delete' in args:
+            if temporary.count_of_tr != 5:
+                temporary.count_of_tr -= 5
+            db_sess.commit()
+        else:
+            new_test = Test()
+            new_test.title = test.title
+            new_test.title_picture = test.title_picture
+            my_tests.type = test.type
+            my_tests.made_date = test.made_date
+            new_test.language_id = test.language_id
+            new_test.creator = test.creator
+            new_test.open = test.open
+            new_test.description = test.description
+            new_data = {}
+            count = 1
+            for i in data:
+                if data[i] and i.endswith('0') and data[i[:-1] + '1']:
+                    new_data[count] = [data[i], data[i[:-1] + '1']]
+                    count += 1
+            new_test.data = json.dumps(new_data)
+            db_sess.add(new_test)
+            old_test = test
+            test = db_sess.query(CreatedTest).filter((CreatedTest.title == test.title),
+                                                     (CreatedTest.creator == current_user.get_id())).first()
+            user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+            user_tests = json.loads(user.user_tests)
+            user_tests[test.id] = {1: {}, 2: {}, 3: {}, 4: {}}
+            user.user_tests = json.dumps(user_tests)
+            db_sess.add(user)
+            db_sess.delete(temporary)
+            db_sess.delete(old_test)
+            db_sess.commit()
+            return redirect('/my_tests')
+    return render_template('third_test_create.html', count_of_tr=temporary.count_of_tr,
+                           column_values=json.loads(temporary.data))
+
+
+@application.route('/create_test', methods=['GET', 'POST'])
+def test_create():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    form = TestCreateForm()
+    db_sess = db_session.create_session()
+    test = db_sess.query(CreatedTest).filter((CreatedTest.creator == current_user.get_id())).first()
+    if test:
+        if test.type == 'first_tests':
+            return redirect('/first_test_create')
+        elif test.type == 'second_tests':
+            return redirect('/second_test_create')
+        else:
+            return redirect('/third_test_create')
+    if request.method == "POST":
+        if form.validate_on_submit():
+            args = {}
+            for i in str(request.form).split("ImmutableMultiDict([('")[-1].split("')])")[0].split("'), ('"):
+                args[i.split("', '")[0]] = i.split("', '")[1]
+            new_test = CreatedTest()
+            if args['types'] == 'Первый тип':
+                new_test.type = 'first_tests'
+            elif args['types'] == 'second_tests':
+                new_test.type = 'Второй тип'
+            else:
+                new_test.type = 'third_tests'
+            new_test.title = form.title.data
+            new_test.language_id = db_sess.query(Category).filter(Category.name == args['language']).first().id
+            new_test.creator = current_user.get_id()
+            new_test.open = args['open'] != 'Только ваш'
+            new_test.description = form.description.data
+            db_sess.add(new_test)
+            test = db_sess.query(CreatedTest).filter((CreatedTest.title == form.title.data),
+                                                     (CreatedTest.creator == current_user.get_id())).first()
+
+            if not os.path.exists('static/images/test/' + str(test.id)):
+                os.mkdir('static/images/test/' + str(test.id))
+                os.mkdir('static/images/test/' + str(test.id) + '/title')
+            if form.title_picture.data.filename != '' and \
+                    form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:] \
+                    in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
+                form.title_picture.data.save(
+                    f'static/images/test/{str(test.id)}/title/{form.title_picture.data.filename}')
+                test.title_picture = f'images/test/{str(test.id)}/title/{form.title_picture.data.filename}'
+            else:
+                shutil.copyfile("static/images/hero/hero-001-1.jpg",
+                                f'static/images/test/{str(test.id)}/title/hero-001-1.jpg')
+                test.title_picture = f'images/test/{str(test.id)}/title/hero-001-1.jpg'
+
+            if test.type == 'first_tests':
+                db_sess.commit()
+                return redirect('/first_test_create')
+            elif test.type == 'second_tests':
+                db_sess.commit()
+                return redirect('/second_test_create')
+            else:
+                temporary = TemporaryThirdTestCreate()
+                temporary.test_id = test.id
+                db_sess.add(temporary)
+                db_sess.commit()
+                return redirect('/third_test_create')
+    return render_template('test_create.html', form=form, languages=[i.name for i in db_sess.query(Category).all()],
+                           types=['Первый тип', 'Второй тип', 'Список слов'])
+
+
+@application.route("/profile")
 def profile():
     if current_user.is_authenticated:
         db_sess = db_session.create_session()
@@ -580,7 +722,7 @@ def profile():
         return redirect("/login")
 
 
-@app.route('/user_edit', methods=['GET', 'POST'])
+@application.route('/user_edit', methods=['GET', 'POST'])
 def edit_user():
     if current_user.is_authenticated:
         if request.method == "GET":
@@ -616,7 +758,7 @@ def edit_user():
     return redirect("/login")
 
 
-@app.route('/registration', methods=['GET', 'POST'])
+@application.route('/registration', methods=['GET', 'POST'])
 def registration():
     if request.method == "GET":
         if not current_user.is_authenticated:
@@ -647,7 +789,7 @@ def registration():
         return redirect('/login')
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@application.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -662,24 +804,24 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/contacts')
+@application.route('/contacts')
 def contacts():
     return render_template('contacts.html')
 
 
-@app.route('/info')
+@application.route('/info')
 def info():
     return render_template('info.html')
 
 
-@app.route('/logout')
+@application.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect("/")
 
 
-@app.errorhandler(404)
+@application.errorhandler(404)
 def page_not_found(expression):
     if expression:
         expression = 404
