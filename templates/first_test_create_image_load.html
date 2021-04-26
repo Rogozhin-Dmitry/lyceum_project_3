@@ -10,24 +10,34 @@
                         <form action="" method="post" class="item" enctype="multipart/form-data">
                             <div class="col-md-12">
                                 <div class="form-group text-center">
-                                    <h2>Создание списка слов</h2>
+                                    <h2>Загрузка фотографий для теста</h2>
                                 </div>
                             </div>
+                            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
                             <div class="col-md-12">
+                                <div class="example-2">
+                                    <div class="form-group text-center">
+                                        <input type="file" name="image" id="file" class="input-file" onChange="submit();">
+                                        <label for="file" class="btn btn-tertiary js-labelFile">
+                                            <i class="icon fa fa-check"></i>
+                                            <span class="js-fileName">Загрузить файл</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if data %}
+                                <div class="col-md-12">
                                 <table border="1">
-                                    <caption>Введите слова и переводы в соответствующие колоки в таблице</caption>
-                                    <tr>
-                                        <th class="text-center"> Слово</th>
-                                        <th class="text-center"> Картинка</th>
-                                    </tr>
+                                    <caption>Загруженные картинки</caption>
                                     {% for i in data %}
                                     <tr>
-                                        <td><input name="column_{{i}}" class="form-control text-center" autocomplete="off"></td>
-                                        <td width="50%"><img hspace="5%" width="90%" vspace="5%" src="{{ url_for('static', filename='/images/test/' + test.id | string + '/data/' + data[i]) }}" alt="Image Block"></td>
+                                        <td width="90%"><img hspace="5%" width="90%" vspace="5%" src="{{ url_for('static', filename='/images/test/' + test.id | string + '/data/' + data[i]) }}" alt="Image"></td>
+                                        <td width="10%"><input name="delete_{{i}}" type="image" src="{{ url_for('static', filename='images/trash.png') }}" width="100%"></td>
                                     </tr>
                                     {% endfor %}
                                 </table>
                             </div>
+                            {% endif %}
                             <div class="col-md-12">
                                 <div class="form-group text-center">
                                     <h3></h3>
@@ -35,12 +45,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-lpbuilder wave-effect" name="create">Создать тест</button>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-lpbuilder wave-effect" name="back">Назад</button>
+                                    <button type="submit" class="btn btn-lpbuilder wave-effect" name="next_page">Продолжить создание</button>
                                 </div>
                             </div>
                         </form>
@@ -169,11 +174,11 @@
     top: 30px;
     }
     }
-    .custom-file-input {
-        color: transparent;
-        }
-        .custom-file-input::-webkit-file-upload-button {
-          visibility: hidden;
-        }
+    .example-2 .btn-tertiary{color:#555;padding:0;line-height:40px;width:300px;margin:auto;display:block;border:2px solid #555}
+    .example-2 .btn-tertiary:hover,.example-2 .btn-tertiary:focus{color:#888;border-color:#888}
+    .example-2 .input-file{width:.1px;height:.1px;opacity:0;overflow:hidden;position:absolute;z-index:-1}
+    .example-2 .input-file + .js-labelFile{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 10px;cursor:pointer}
+    .example-2 .input-file + .js-labelFile .icon:before{content:"\f093"}
+    .example-2 .input-file + .js-labelFile.has-file .icon:before{content:"\f00c";color:#5AAC7B}
 </style>
 {% endblock %}

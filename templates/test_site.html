@@ -53,24 +53,46 @@
                             </div>
                         </div>
                         {% if subscribe %}
-                            {% for i in range(4) %}
-                            <div class="col-md-3 col-sm-6 content-block">
-                                <div class="form-block-container text-center">
-                                    <div class="col-md-6 text-center">
-                                        <h3>Этап {{i + 1}}</h3>
+                            {% if test.type == 'first_tests'%}
+                                {% for i in range(2) %}
+                                    <div class="col-md-3 col-sm-6 content-block">
+                                        <div class="form-block-container text-center">
+                                            <div class="col-md-6 text-center">
+                                                <h3>Этап {{i + 1}}</h3>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <a href="/first_test/{{test.id}}/{{i + 1}}" title="Этап {{i + 1}}" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        {% if test.type == 'first_tests'%}
-                                            <a href="/first_tests/{{test.id}}/{{i + 1}}" title="Этап {{i + 1}}" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
-                                        {% elif test.type == 'second_tests'%}
-                                           <a href="/second_tests/{{test.id}}/{{i + 1}}" title="Этап {{i + 1}}" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
-                                        {% else %}
-                                            <a href="/third_test/{{test.id}}/{{i + 1}}" title="Web design" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
-                                        {% endif %}
+                                {% endfor %}
+                            {% elif test.type == 'second_tests'%}
+                                {% for i in range(4) %}
+                                    <div class="col-md-3 col-sm-6 content-block">
+                                        <div class="form-block-container text-center">
+                                            <div class="col-md-6 text-center">
+                                                <h3>Этап {{i + 1}}</h3>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <a href="/second_test/{{test.id}}/{{i + 1}}" title="Этап {{i + 1}}" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                {% for i in range(4) %}
+                                    <div class="col-md-3 col-sm-6 content-block">
+                                        <div class="form-block-container text-center">
+                                            <div class="col-md-6 text-center">
+                                                <h3>Этап {{i + 1}}</h3>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <a href="/third_test/{{test.id}}/{{i + 1}}" title="Этап {{i + 1}}" class="btn-lpbuilder-circle btn-lpbuilder-circle-md wave-effect"><i class="fa fa-angle-double-right"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>

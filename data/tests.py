@@ -35,10 +35,6 @@ class Test(SqlAlchemyBase, SerializerMixin):
 
     language = orm.relation('Category')
     user = orm.relation('User')
-    __mapper_args__ = {
-        'polymorphic_identity': 'tests',
-        'polymorphic_on': type
-    }
 
 
 class FirstTest(Test):

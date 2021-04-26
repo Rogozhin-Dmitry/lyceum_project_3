@@ -14,17 +14,19 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <table border="1">
-                                        <caption>Введите слова и переводы в соответствующие колоки в таблице</caption>
-                                        <tr>
-                                            <th> Слово </th>
-                                            <th> Перевод </th>
-                                        </tr>
-                                        {% for i in range(count_of_tr) %}
-                                            <tr><td><input name="column_{{i}}_0" class="form-control" autocomplete="off" value="{{ column_values["column_" + i|string +"_0"] }}"></td>
-                                                <td><input name="column_{{i}}_1" class="form-control" autocomplete="off" value="{{ column_values["column_" + i|string +"_1"] }}"></td></tr>
-                                        {% endfor %}
-                                    </table>
+                                    <div class="text-center">
+                                        <table border="1">
+                                            <caption>Введите слова и переводы в соответствующие колоки в таблице</caption>
+                                            <tr>
+                                                <th class="text-center"> Слово </th>
+                                                <th class="text-center"> Перевод </th>
+                                            </tr>
+                                            {% for i in range(count_of_tr) %}
+                                                <tr><td><input name="column_{{i}}_0" class="form-control text-center" autocomplete="off" value="{{ column_values["column_" + i|string +"_0"] }}"></td>
+                                                    <td><input name="column_{{i}}_1" class="form-control text-center" autocomplete="off" value="{{ column_values["column_" + i|string +"_1"] }}"></td></tr>
+                                            {% endfor %}
+                                        </table>
+                                    </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group text-center">

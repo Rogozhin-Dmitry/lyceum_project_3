@@ -3,8 +3,8 @@ from sqlalchemy_serializer import SerializerMixin
 from .db_session import SqlAlchemyBase
 
 
-class TemporaryThirdTest(SqlAlchemyBase, SerializerMixin):
-    __tablename__ = 'temporary_third_test'
+class TemporaryFirstTest(SqlAlchemyBase, SerializerMixin):
+    __tablename__ = 'temporary_first_test'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     selected_page = sqlalchemy.Column(sqlalchemy.Integer, default=1)
