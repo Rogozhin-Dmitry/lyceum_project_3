@@ -23,7 +23,7 @@
                                     {% for i in data %}
                                     <tr>
                                         <td><input name="column_{{i}}" class="form-control text-center" autocomplete="off"></td>
-                                        <td width="50%"><img hspace="5%" width="90%" vspace="5%" src="{{ url_for('static', filename='/images/test/' + test.id | string + '/data/' + data[i]) }}" alt="Image Block"></td>
+                                        <td width="50%"><img hspace="5%" width="90%" vspace="5%" src="{{ url_for('static', filename='images/temp/' + data[i]) }}" alt="Image Block"></td>
                                     </tr>
                                     {% endfor %}
                                 </table>

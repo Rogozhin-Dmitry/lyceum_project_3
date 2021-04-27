@@ -31,7 +31,7 @@
                                     <caption>Загруженные картинки</caption>
                                     {% for i in data %}
                                     <tr>
-                                        <td width="90%"><img hspace="5%" width="90%" vspace="5%" src="{{ url_for('static', filename='/images/test/' + test.id | string + '/data/' + data[i]) }}" alt="Image"></td>
+                                        <td width="90%"><img hspace="5%" width="90%" vspace="5%" src="{{ url_for('static', filename='images/temp/' + data[i]) }}" alt="Image"></td>
                                         <td width="10%"><input name="delete_{{i}}" type="image" src="{{ url_for('static', filename='images/trash.png') }}" width="100%"></td>
                                     </tr>
                                     {% endfor %}

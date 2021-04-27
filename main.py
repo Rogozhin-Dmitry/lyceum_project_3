@@ -427,7 +427,7 @@ def first_test_create():
                 else:
                     num = 0
                 name = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
-                data.save(f"static/images/test/{temporary.test_id}/data/{name}.jpg")
+                data.save(f"static/images/temp/{name}.jpg")
                 data_temp[str(num)] = f'{name}.jpg'
             temporary.data = json.dumps(data_temp)
             db_sess.commit()
@@ -467,6 +467,10 @@ def first_test_create():
                 user_tests = json.loads(user.user_tests)
                 user_tests[test.id] = {1: {}, 2: {}}
                 user.user_tests = json.dumps(user_tests)
+                for i in data_1:
+                    shutil.move(f"static/images/temp/{data_1[i][1]}",
+                                f"static/images/test/{test.id}/data/{data_1[i][1]}")
+
                 db_sess.add(user)
                 db_sess.delete(temporary)
                 db_sess.commit()
@@ -761,10 +765,6 @@ def registration():
             db_sess.add(user)
             db_sess.commit()
             login_user(user)
-            if not os.path.exists('static/img/users/' +
-                                  str(db_sess.query(User).filter(User.email == form.email.data).first().id)):
-                os.mkdir('static/img/users/'
-                         + str(db_sess.query(User).filter(User.email == form.email.data).first().id))
             return redirect('/profile')
         return redirect('/login')
 
