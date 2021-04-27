@@ -93,6 +93,10 @@ def index(page_id=1):
         i.test_language = languages[i.language_id]
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: x.title)
+    if user.current_filter == 2:
+        tests = sorted(tests, key=lambda x: x.made_date, reverse=True)
+    if user.current_filter == 3:
+        tests = sorted(tests, key=lambda x: x.made_date)
     if len(tests) > 12 * page_id:
         next_page_id = page_id + 1
     else:
@@ -128,7 +132,10 @@ def my_tests(page_id=1):
         i.test_language = languages[i.language_id]
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: x.title)
-
+    if user.current_filter == 2:
+        tests = sorted(tests, key=lambda x: x.made_date, reverse=True)
+    if user.current_filter == 3:
+        tests = sorted(tests, key=lambda x: x.made_date)
     if len(tests) > 12 * page_id:
         next_page_id = page_id + 1
     else:
@@ -164,7 +171,11 @@ def open_user_tests(user_id=1, page_id=1):
     for i in tests:
         i.test_language = languages[i.language_id]
     if user.current_filter == 1:
-        tests = sorted(tests, key=lambda x: int(x.name.split()[-1]))
+        tests = sorted(tests, key=lambda x: x.title)
+    if user.current_filter == 2:
+        tests = sorted(tests, key=lambda x: x.made_date, reverse=True)
+    if user.current_filter == 3:
+        tests = sorted(tests, key=lambda x: x.made_date)
     if len(tests) > 12 * page_id:
         next_page_id = page_id + 1
     else:
