@@ -16,6 +16,8 @@ from data.temporary_third_test_create import TemporaryThirdTestCreate
 from data.temporary_third_test import TemporaryThirdTest
 from data.temporary_first_test import TemporaryFirstTest
 from data.temporary_first_test_create import TemporaryFirstTestCreate
+from data.temporary_second_test import TemporarySecondTest
+from data.temporary_second_test_create import TemporarySecondTestCreate
 from data.tests import Test
 from data.users import User
 from extend_main_index_page import start_app
@@ -43,10 +45,8 @@ def main():
 
     first_language = Category(name="English")
     second_language = Category(name="Japanese")
-    second_language_1 = Category(name="DFGSDFSFDs")
     db_sess.add(first_language)
     db_sess.add(second_language)
-    db_sess.add(second_language_1)
     db_sess.commit()
     application.run(port=5001, host='192.168.1.105')
 
@@ -278,15 +278,6 @@ def test_site(test_id=1):
 #                            second_sentence=second_sentence)
 #
 #
-# @app.route('/test_succeed/<int:id>')
-# def test_succeed(user_id):
-#     score = session.get('total_score', 0)
-#     session['total_score'] = 0
-#     db_sess = db_session.create_session()
-#     test = db_sess.query(FirstTest).filter(FirstTest.id == user_id).first()
-#     return render_template('test_succeed.html', test=test, score=score)
-#
-#
 # @app.route('/first_test_create/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
 # @app.route('/first_test_create/<int:test_id>', methods=['GET', 'POST'])
 # def first_test_create(test_id, page_id=None):
@@ -463,45 +454,135 @@ def test_site(test_id=1):
 #             db_sess.commit()
 #             return redirect('/test_page_creation/' + str(test_id))
 #     return render_template('second_test_create.html', form=form)
-#
-#
-# @app.route('/delete_page/<int:test_id>/<int:page_id>', methods=['GET', 'POST'])
-# def delete_page(test_id, page_id):
-#     db_sess = db_session.create_session()
-#     current_test = db_sess.query(Test).filter(Test.id == test_id).first()
-#     if current_test.type == 'second_tests':
-#         current_page = db_sess.query(SecondTestPage).filter(SecondTestPage.id == page_id).first()
-#     elif current_test.type == 'first_tests':
-#         current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
-#     else:
-#         current_page = db_sess.query(FirstTestPage).filter(FirstTestPage.id == page_id).first()
-#     current_test.pages.remove(current_page)
-#     db_sess.delete(current_page)
-#     db_sess.commit()
-#     return redirect('/test_page_creation/' + str(test_id))
-#
-#
-# @app.route('/delete_test/<int:test_id>', methods=['GET', 'POST'])
-# def delete_test(test_id):
-#     db_sess = db_session.create_session()
-#     current_test = db_sess.query(Test).filter(Test.id == test_id).first()
-#     for page in current_test.pages:
-#         current_test.pages.remove(page)
-#         db_sess.delete(page)
-#     db_sess.delete(current_test)
-#     db_sess.commit()
-#     return redirect('/created_test_page/' + str(current_user.id))
-#
-#
-# @app.route('/test_page_creation')
-# def test_page_creation():
-#     if current_user.is_authenticated:
-#         db_sess = db_session.create_session()
-#         current_test = db_sess.query(Test).filter(Test.id == current_user.get_id()).first()
-#         pages_list = current_test.pages
-#         return render_template('test_page_creation.html', pages=pages_list, test=current_test)
-#     else:
-#         return redirect("/login")
+
+
+@application.route('/second_test', methods=['GET', 'POST'])
+@application.route('/second_test/<int:test_id>', methods=['GET', 'POST'])
+@application.route('/second_test/<int:test_id>/<int:test_type>', methods=['GET', 'POST'])
+def second_test(test_id=1, test_type=1):
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    db_sess = db_session.create_session()
+    test_temp = db_sess.query(TemporarySecondTest).filter(TemporarySecondTest.user_id == current_user.get_id()).filter(
+        TemporarySecondTest.test_id == test_id).first()
+    if not test_temp:
+        user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+        test = db_sess.query(Test).filter((Test.id == test_id)).first()
+        if not test or str(test.id) not in json.loads(user.user_tests) or not test.type == 'second_tests':
+            abort(404)
+        test_temp = TemporarySecondTest()
+        test_temp.user_id = current_user.get_id()
+        test_temp.test_id = test.id
+        test_temp.test_type = test_type
+        if test_type == 1:
+            test_temp.data = test.data
+        else:
+            test_data = json.loads(test.data)
+            test_data_1 = {}
+            j = 1
+            test_data_keys = list(test_data.keys())
+            random.shuffle(test_data_keys)
+            for i in test_data_keys:
+                test_data_1[j] = test_data[i]
+                j += 1
+            test_temp.data = json.dumps(test_data_1)
+        db_sess.add(test_temp)
+        db_sess.commit()
+    else:
+        if request.method == "POST":
+            result_data = json.loads(test_temp.result_data)
+            result_data[str(test_temp.selected_page)] = [request.form['answer_1'], request.form['answer_2'],
+                                                         request.form['answer_3']]
+            test_temp.result_data = json.dumps(result_data)
+            test_temp.selected_page += 1
+            data = json.loads(test_temp.data)
+            if test_temp.selected_page > len(list(data.keys())):
+                score = 0
+                error_table = []
+                for i in data:
+                    for j in data[i][:-1]:
+                        if j.lower() == result_data[i][data[i][:-1].index(j)].lower():
+                            score += 0.3333333
+                        else:
+                            error_table.append([j.lower(), result_data[i][data[i][:-1].index(j)].lower()])
+                user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+                user_data = json.loads(user.user_tests)
+                if 'max_count' in user_data[str(test_id)][str(test_temp.test_type)] \
+                        and int(user_data[str(test_id)][str(test_temp.test_type)]['max_count']) > score:
+                    max_score = int(user_data[str(test_id)][str(test_temp.test_type)]['max_count'])
+                else:
+                    user_data[str(test_id)][str(test_temp.test_type)]['max_count'] = score
+                    user.user_tests = json.dumps(user_data)
+                    max_score = round(score, 2)
+                db_sess.delete(test_temp)
+                db_sess.commit()
+                return render_template('test_result.html', score=round(score, 2), test_id=test_id, max_score=max_score,
+                                       pages=len(list(data.keys())), error_table=error_table)
+            db_sess.commit()
+    return render_template('second_test.html', name=json.loads(test_temp.data)[str(test_temp.selected_page)][-1],
+                           test=test_temp)
+
+
+@application.route('/second_test_create', methods=['GET', 'POST'])
+def second_test_create():
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    db_sess = db_session.create_session()
+    test = db_sess.query(CreatedTest).filter((CreatedTest.creator == current_user.get_id())).first()
+    if not test:
+        return redirect('/create_test')
+    temporary = db_sess.query(TemporarySecondTestCreate).filter((TemporarySecondTestCreate.test_id == test.id)).first()
+    if not (test and test.type == 'second_tests'):
+        redirect('/create_test')
+    if request.method == "POST":
+        args = {}
+        for i in str(request.form).split("ImmutableMultiDict([('")[-1].split("')])")[0].split("'), ('"):
+            args[i.split("', '")[0]] = i.split("', '")[1]
+        data = json.loads(temporary.data)
+        for i in args:
+            if i not in ['append', 'delete', 'create']:
+                data[i] = args[i]
+        temporary.data = json.dumps(data)
+        if 'append' in args:
+            if temporary.count_of_tr != 50:
+                temporary.count_of_tr += 5
+            db_sess.commit()
+        elif 'delete' in args:
+            if temporary.count_of_tr != 5:
+                temporary.count_of_tr -= 5
+            db_sess.commit()
+        else:
+            new_test = Test()
+            new_test.title = test.title
+            new_test.title_picture = test.title_picture
+            new_test.type = 'second_tests'
+            new_test.made_date = test.made_date
+            new_test.language_id = test.language_id
+            new_test.creator = test.creator
+            new_test.open = test.open
+            new_test.description = test.description
+            new_data = {}
+            count = 1
+            for i in data:
+                if data[i] and i.endswith('0') and data[i[:-1] + '1'] and data[i[:-1] + '2'] and data[i[:-1] + '3']:
+                    new_data[count] = [data[i], data[i[:-1] + '1'], data[i[:-1] + '2'], data[i[:-1] + '3']]
+                    count += 1
+            new_test.data = json.dumps(new_data)
+            db_sess.add(new_test)
+            db_sess.delete(test)
+            db_sess.commit()
+            db_sess = db_session.create_session()
+            user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
+            test = db_sess.query(Test).filter((Test.creator == user.id), (Test.title == test.title)).first()
+            user_tests = json.loads(user.user_tests)
+            user_tests[test.id] = {1: {}, 2: {}, 3: {}, 4: {}}
+            user.user_tests = json.dumps(user_tests)
+            db_sess.add(user)
+            db_sess.delete(temporary)
+            db_sess.commit()
+            return redirect('/my_tests')
+    return render_template('second_test_create.html', count_of_tr=temporary.count_of_tr,
+                           column_values=json.loads(temporary.data))
 
 
 @application.route('/first_test', methods=['GET', 'POST'])
@@ -815,8 +896,8 @@ def test_create():
             new_test = CreatedTest()
             if args['types'] == 'Первый тип':
                 new_test.type = 'first_tests'
-            elif args['types'] == 'second_tests':
-                new_test.type = 'Второй тип'
+            elif args['types'] == 'Второй тип':
+                new_test.type = 'second_tests'
             else:
                 new_test.type = 'third_tests'
             new_test.title = form.title.data
@@ -850,6 +931,9 @@ def test_create():
                 db_sess.commit()
                 return redirect('/first_test_create')
             elif test.type == 'second_tests':
+                temporary = TemporarySecondTestCreate()
+                temporary.test_id = test.id
+                db_sess.add(temporary)
                 db_sess.commit()
                 return redirect('/second_test_create')
             else:

@@ -1,35 +1,177 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    {% block head %}{% endblock %}
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous">
-    <title>{{title}}</title>
-</head>
-<body>
-<form action="" method="post" class="item" enctype="multipart/form-data" novalidate>
-<h3>Создайте тест с выбором правильного слова</h3>
-        {{ form.hidden_tag() }}
-        <p>{{form.first_sentence()}} ______ {{form.second_sentence()}}</p>
-<p>
-{% for subfield in form.right_word_choosing %}
-           {{subfield}} {{subfield.data}}
-           {% endfor %}
-</p>
-<p>
-           {% for word in form.words %}
-    {{ word.hidden_tag()}}
-      {{ word.slot()}}
-{% endfor %}
-</p>
-        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-<p>{{ form.left(type="submit", class="btn btn-primary") }}</p>
-<p>{{ form.right(type="submit", class="btn btn-primary") }}</p>
-        <div>{{ message }}</div>
-    </form>
-</body>
-</html>
+{% extends "main_form_design.html" %}
+
+{% block content %}
+    <div class="white-section section-lg-padding border-bottom">
+        <div class="section-container">
+            <div class="container">
+                <div class="row">
+                    <form action="" method="post" class="item" enctype="multipart/form-data">
+                        <div class="col-md-12">
+                            <div class="form-group text-center">
+                                <h2>Создание теста на формы глаголов</h2>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="col-md-3">
+                                <h2></h2>
+                            </div>
+                            <div class="col-md-6">
+                                <table border="1">
+                                    <caption>Введите слова и переводы в соответствующие колонки в таблице</caption>
+                                    <tr>
+                                        <th class="text-center">1 форма</th>
+                                        <th class="text-center">2 форма</th>
+                                        <th class="text-center">3 форма</th>
+                                        <th class="text-center">Перевод</th>
+                                    </tr>
+                                    {% for i in range(count_of_tr) %}
+                                        <tr>
+                                            <td><input name="column_{{i}}_0" class="form-control text-center" autocomplete="off" value="{{ column_values["column_" + i|string +"_0"] }}"></td>
+                                            <td><input name="column_{{i}}_1" class="form-control text-center" autocomplete="off" value="{{ column_values["column_" + i|string +"_1"] }}"></td>
+                                            <td><input name="column_{{i}}_2" class="form-control text-center" autocomplete="off" value="{{ column_values["column_" + i|string +"_2"] }}"></td>
+                                            <td><input name="column_{{i}}_3" class="form-control text-center" autocomplete="off" value="{{ column_values["column_" + i|string +"_3"] }}"></td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group text-center">
+                                    <h3></h3>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-lpbuilder wave-effect" name="append">Добавить 5 слов</button>
+                                <button type="submit" class="btn btn-lpbuilder wave-effect" name="delete">Удалить 5 слов</button>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-lpbuilder wave-effect" name="create">Создать тест</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Java Script Files
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    ======================================================================== -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plugins/mobile/mobile.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <script type="text/javascript" src="https://lpbuilder.pro/js/app.js"></script>
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-155226992-1"></script>
+    <style>
+    #style-switcher {
+    z-index: 9999;
+    position: fixed;
+    top: 100px;
+    width: 212px;
+    height: auto;
+    /*min-height: 200px;*/
+    border: 1px solid #f1f1f1;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: left;
+    background: white;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+    }
+
+    .close-style-switcher {
+    left: -212px;
+    }
+
+    .open-style-switcher {
+    left: -1px;
+    }
+
+    #style-switcher .segment {
+    width: 100%;
+    padding: 15px 10px 15px 0;
+    padding: 15px 25px;
+
+    }
+
+    #style-switcher a.panel-button {
+    position: absolute;
+    top: 30px;
+    right: -50px;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #f1f1f1;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    text-align: center;
+    font-size: 23px;
+    line-height: 47px;
+    background: white;
+    cursor: pointer;
+    }
+
+    #style-switcher h3 {
+    margin: 0;
+    }
+
+    #style-switcher .segment a.switcher {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-top: 5px;
+    margin-right: 3px;
+    border: 1px solid #efefef;
+    cursor: pointer;
+    }
+
+    .red-bg {
+    background: #EF4035;
+    }
+
+    .orange-bg {
+    background: #F26F21;
+    }
+
+    .yellow-bg {
+    background: #FFC153;
+    }
+
+    .green-bg {
+    background: #5CB85C;
+    }
+
+    .turquoise-bg {
+    background: #41C4AB;
+    }
+
+    .aqua-bg {
+    background: #38E6D8;
+    }
+
+    .blue-bg {
+    background: #0A8FD5;
+    }
+
+    .purple-bg {
+    background: #AC5AFF;
+    }
+
+    .pink-bg {
+    background: #F62459;
+    }
+
+    .tan-bg {
+    background: #C2B49A;
+    }
+
+    @media(max-width:480px) {
+    #style-switcher {
+    top: 30px;
+    }
+    }
+    </style>
+{% endblock %}
