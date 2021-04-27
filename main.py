@@ -43,6 +43,14 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/site_data.db")
+    db_sess = db_session.create_session()
+    db_sess.query(Category).delete()
+
+    first_language = Category(name="English")
+    second_language = Category(name="Deutsch")
+    db_sess.add(first_language)
+    db_sess.add(second_language)
+    db_sess.commit()
     application.run(port=5001, host='192.168.1.105')
 
 
@@ -320,6 +328,13 @@ def second_test_create():
             db_sess = db_session.create_session()
             user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
             test = db_sess.query(Test).filter((Test.creator == user.id), (Test.title == test.title)).first()
+            if not os.path.exists('static/images/test/' + str(test.id)):
+                os.mkdir('static/images/test/' + str(test.id))
+                os.mkdir('static/images/test/' + str(test.id) + '/title')
+                os.mkdir('static/images/test/' + str(test.id) + '/data')
+            shutil.move(f"static/{test.title_picture}",
+                        f"static/images/test/{test.id}/title/{test.title_picture.split('/')[-1]}")
+            test.title_picture = f"images/test/{test.id}/title/{test.title_picture.split('/')[-1]}"
             user_tests = json.loads(user.user_tests)
             user_tests[test.id] = {1: {}, 2: {}, 3: {}, 4: {}}
             user.user_tests = json.dumps(user_tests)
@@ -374,7 +389,7 @@ def first_test(test_id=1, test_type=1):
                 score = 0
                 error_table = []
                 for i in data:
-                    if data[i][1].lower() == result_data[i].lower():
+                    if data[i][0].lower() == result_data[i].lower():
                         score += 1
                     else:
                         error_table.append([data[i][0].lower(), result_data[i].lower()])
@@ -419,7 +434,7 @@ def first_test_create():
                     temporary.load_image = False
                 else:
                     name = data_temp.pop(str(list(args.keys())[0][:-2].split('_')[-1]))
-                    os.remove(f"static/images/test/{temporary.test_id}/data/{name}")
+                    os.remove(f"static/images/temp/{name}")
             else:
                 data = request.files['image']
                 if data_temp:
@@ -464,6 +479,13 @@ def first_test_create():
                 db_sess = db_session.create_session()
                 user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
                 test = db_sess.query(Test).filter((Test.creator == user.id), (Test.title == test.title)).first()
+                if not os.path.exists('static/images/test/' + str(test.id)):
+                    os.mkdir('static/images/test/' + str(test.id))
+                    os.mkdir('static/images/test/' + str(test.id) + '/title')
+                    os.mkdir('static/images/test/' + str(test.id) + '/data')
+                shutil.move(f"static/{test.title_picture}",
+                            f"static/images/test/{test.id}/title/{test.title_picture.split('/')[-1]}")
+                test.title_picture = f"images/test/{test.id}/title/{test.title_picture.split('/')[-1]}"
                 user_tests = json.loads(user.user_tests)
                 user_tests[test.id] = {1: {}, 2: {}}
                 user.user_tests = json.dumps(user_tests)
@@ -613,6 +635,13 @@ def third_test_create():
             db_sess = db_session.create_session()
             user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
             test = db_sess.query(Test).filter((Test.creator == user.id), (Test.title == test.title)).first()
+            if not os.path.exists('static/images/test/' + str(test.id)):
+                os.mkdir('static/images/test/' + str(test.id))
+                os.mkdir('static/images/test/' + str(test.id) + '/title')
+                os.mkdir('static/images/test/' + str(test.id) + '/data')
+            shutil.move(f"static/{test.title_picture}",
+                        f"static/images/test/{test.id}/title/{test.title_picture.split('/')[-1]}")
+            test.title_picture = f"images/test/{test.id}/title/{test.title_picture.split('/')[-1]}"
             user_tests = json.loads(user.user_tests)
             user_tests[test.id] = {1: {}, 2: {}, 3: {}, 4: {}}
             user.user_tests = json.dumps(user_tests)
@@ -658,21 +687,17 @@ def test_create():
             db_sess.add(new_test)
             test = db_sess.query(CreatedTest).filter((CreatedTest.title == form.title.data),
                                                      (CreatedTest.creator == current_user.get_id())).first()
-
-            if not os.path.exists('static/images/test/' + str(test.id)):
-                os.mkdir('static/images/test/' + str(test.id))
-                os.mkdir('static/images/test/' + str(test.id) + '/title')
-                os.mkdir('static/images/test/' + str(test.id) + '/data')
             if form.title_picture.data.filename != '' and \
                     form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:] \
                     in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
-                form.title_picture.data.save(
-                    f'static/images/test/{str(test.id)}/title/{form.title_picture.data.filename}')
-                test.title_picture = f'images/test/{str(test.id)}/title/{form.title_picture.data.filename}'
+                name = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
+                form.title_picture.data.save(f'static/images/temp/{name}.jpg')
+                test.title_picture = f'images/temp/{name}.jpg'
             else:
+                name = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
                 shutil.copyfile("static/images/hero/hero-001-1.jpg",
-                                f'static/images/test/{str(test.id)}/title/hero-001-1.jpg')
-                test.title_picture = f'images/test/{str(test.id)}/title/hero-001-1.jpg'
+                                f'static/images/temp/{name}.jpg')
+                test.title_picture = f'images/temp/{name}.jpg'
 
             if test.type == 'first_tests':
                 temporary = TemporaryFirstTestCreate()
