@@ -857,6 +857,7 @@ def delete_test(test_id):
         data = json.loads(i.user_tests)
         data.pop(str(test.id))
         i.user_tests = json.dumps(data)
+    shutil.rmtree(f'static/images/test/{test.id}')
     db_sess.delete(test)
     db_sess.commit()
     return redirect('/my_tests')
