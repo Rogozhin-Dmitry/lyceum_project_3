@@ -844,6 +844,24 @@ def login():
     return render_template('login.html', form=form)
 
 
+@application.route('/delete_test/<int:test_id>')
+def delete_test(test_id):
+    if not current_user.is_authenticated:
+        return redirect('/login')
+    db_sess = db_session.create_session()
+    test = db_sess.query(Test).filter((Test.id == test_id), (Test.creator == current_user.id)).first()
+    if not test:
+        abort(404)
+    users = db_sess.query(User).filter(User.user_tests.like(f'%"{test.id}"%')).all()
+    for i in users:
+        data = json.loads(i.user_tests)
+        data.pop(str(test.id))
+        i.user_tests = json.dumps(data)
+    db_sess.delete(test)
+    db_sess.commit()
+    return redirect('/my_tests')
+
+
 @application.route('/contacts')
 def contacts():
     return render_template('contacts.html')
