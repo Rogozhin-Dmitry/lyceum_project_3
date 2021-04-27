@@ -40,6 +40,13 @@
                                 </div>
                                 <h4>{{test.title}}</h4>
                                 <h4>Язык: {{test.test_language}}</h4>
+                                {% if test.type == 'first_tests'%}
+                                    <h4>Тип теста: Первый тип</h4>
+                                {% elif test.type == 'second_tests'%}
+                                    <h4>Тип теста: Второй тип</h4>
+                                {% else %}
+                                    <h4>Тип теста: Список слов</h4>
+                                {% endif %}
                                 <p>{{test.description}}</p>
                             </div>
                         </div>

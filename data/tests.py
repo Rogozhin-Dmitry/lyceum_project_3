@@ -23,6 +23,6 @@ class Test(SqlAlchemyBase, SerializerMixin):
                              default=False)
     description = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     data = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='{}')
-
+    popularity = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     language = orm.relation('Category')
     user = orm.relation('User')

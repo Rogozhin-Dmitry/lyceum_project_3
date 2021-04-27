@@ -28,8 +28,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                       default=datetime.datetime.now)
-    score = sqlalchemy.Column(sqlalchemy.Integer,
-                              default=0)
     user_tests = sqlalchemy.Column(sqlalchemy.String, nullable=True, default='{}')
     current_filter = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     passed_test = orm.relation("Test",

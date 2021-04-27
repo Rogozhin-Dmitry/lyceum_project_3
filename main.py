@@ -4,6 +4,7 @@ import shutil
 import json
 import string
 import random
+from PIL import Image
 
 from flask import Flask, render_template, redirect, request, session, abort
 from flask_login import LoginManager
@@ -91,6 +92,8 @@ def index(page_id=1):
         languages[i.id] = i.name
     for i in tests:
         i.test_language = languages[i.language_id]
+    if user.current_filter == 0:
+        tests = sorted(tests, key=lambda x: int(x.popularity), reverse=True)
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: x.title)
     if user.current_filter == 2:
@@ -130,6 +133,8 @@ def my_tests(page_id=1):
         languages[i.id] = i.name
     for i in tests:
         i.test_language = languages[i.language_id]
+    if user.current_filter == 0:
+        tests = sorted(tests, key=lambda x: int(x.popularity), reverse=True)
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: x.title)
     if user.current_filter == 2:
@@ -170,6 +175,8 @@ def open_user_tests(user_id=1, page_id=1):
         languages[i.id] = i.name
     for i in tests:
         i.test_language = languages[i.language_id]
+    if user.current_filter == 0:
+        tests = sorted(tests, key=lambda x: int(x.popularity), reverse=True)
     if user.current_filter == 1:
         tests = sorted(tests, key=lambda x: x.title)
     if user.current_filter == 2:
@@ -235,6 +242,7 @@ def second_test(test_id=1, test_type=1):
         test = db_sess.query(Test).filter((Test.id == test_id)).first()
         if not test or str(test.id) not in json.loads(user.user_tests) or not test.type == 'second_tests':
             abort(404)
+        test.popularity += 1
         test_temp = TemporarySecondTest()
         test_temp.user_id = current_user.get_id()
         test_temp.test_id = test.id
@@ -371,6 +379,7 @@ def first_test(test_id=1, test_type=1):
         test = db_sess.query(Test).filter((Test.id == test_id)).first()
         if not test or str(test.id) not in json.loads(user.user_tests) or not test.type == 'first_tests':
             abort(404)
+        test.popularity += 1
         test_temp = TemporaryFirstTest()
         test_temp.user_id = current_user.get_id()
         test_temp.test_id = test.id
@@ -442,7 +451,8 @@ def first_test_create():
                 for i in str(request.form).split("ImmutableMultiDict([('")[-1].split("')])")[0].split("'), ('"):
                     args[i.split("', '")[0]] = i.split("', '")[1]
                 if 'next_page' in args:
-                    temporary.load_image = False
+                    if data_temp:
+                        temporary.load_image = False
                 else:
                     name = data_temp.pop(str(list(args.keys())[0][:-2].split('_')[-1]))
                     os.remove(f"static/images/temp/{name}")
@@ -454,6 +464,10 @@ def first_test_create():
                     num = 0
                 name = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
                 data.save(f"static/images/temp/{name}.jpg")
+                im = Image.open(f"static/images/temp/{name}.jpg")
+                im1 = im.resize((1600, 900))
+                im1.save(f"static/images/temp/{name}.jpg")
+
                 data_temp[str(num)] = f'{name}.jpg'
             temporary.data = json.dumps(data_temp)
             db_sess.commit()
@@ -465,6 +479,13 @@ def first_test_create():
                 temporary.load_image = True
             else:
                 args.pop('create')
+                data = {}
+                for i in args:
+                    num = i.replace('column_', '')
+                    if args[i]:
+                        data[num] = [args[i], data_temp[num]]
+                if not data:
+                    return redirect('/first_test_create')
                 new_test = Test()
                 new_test.title = test.title
                 new_test.title_picture = test.title_picture
@@ -474,10 +495,6 @@ def first_test_create():
                 new_test.creator = test.creator
                 new_test.open = test.open
                 new_test.description = test.description
-                data = {}
-                for i in args:
-                    num = i.replace('column_', '')
-                    data[num] = [args[i], data_temp[num]]
                 count = 1
                 data_1 = {}
                 for i in data:
@@ -529,6 +546,7 @@ def third_test(test_id=1, test_type=1):
         test = db_sess.query(Test).filter((Test.id == test_id)).first()
         if not test or str(test.id) not in json.loads(user.user_tests) or not test.type == 'third_tests':
             abort(404)
+        test.popularity += 1
         test_temp = TemporaryThirdTest()
         test_temp.user_id = current_user.get_id()
         test_temp.test_id = test.id
@@ -624,6 +642,14 @@ def third_test_create():
                 temporary.count_of_tr -= 5
             db_sess.commit()
         else:
+            new_data = {}
+            count = 1
+            for i in data:
+                if data[i] and i.endswith('0') and data[i[:-1] + '1']:
+                    new_data[count] = [data[i], data[i[:-1] + '1']]
+                    count += 1
+            if not new_data:
+                return redirect('/third_test_create')
             new_test = Test()
             new_test.title = test.title
             new_test.title_picture = test.title_picture
@@ -633,12 +659,6 @@ def third_test_create():
             new_test.creator = test.creator
             new_test.open = test.open
             new_test.description = test.description
-            new_data = {}
-            count = 1
-            for i in data:
-                if data[i] and i.endswith('0') and data[i[:-1] + '1']:
-                    new_data[count] = [data[i], data[i[:-1] + '1']]
-                    count += 1
             new_test.data = json.dumps(new_data)
             db_sess.add(new_test)
             db_sess.delete(test)
@@ -703,6 +723,10 @@ def test_create():
                     in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
                 name = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
                 form.title_picture.data.save(f'static/images/temp/{name}.jpg')
+                im = Image.open(f'static/images/temp/{name}.jpg')
+                im1 = im.resize((1600, 900))
+                im1.save(f'static/images/temp/{name}.jpg')
+
                 test.title_picture = f'images/temp/{name}.jpg'
             else:
                 name = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
