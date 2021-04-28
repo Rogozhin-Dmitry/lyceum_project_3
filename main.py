@@ -5,6 +5,8 @@ import json
 import string
 import random
 from PIL import Image
+import logging
+from logging.handlers import RotatingFileHandler
 
 from flask import Flask, render_template, redirect, request, session, abort
 from flask_login import LoginManager
@@ -46,14 +48,11 @@ def main():
     db_session.global_init("db/site_data.db")
     db_sess = db_session.create_session()
     db_sess.query(Category).delete()
-
     first_language = Category(name="English")
     second_language = Category(name="Deutsch")
     db_sess.add(first_language)
     db_sess.add(second_language)
     db_sess.commit()
-    import logging
-    from logging.handlers import RotatingFileHandler
     file_handler = RotatingFileHandler('python.log', maxBytes=1024 * 1024 * 100, backupCount=20)
     file_handler.setLevel(logging.ERROR)
     application.logger.setLevel(logging.ERROR)
