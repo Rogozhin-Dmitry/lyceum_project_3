@@ -52,7 +52,7 @@ def main():
     db_sess.add(first_language)
     db_sess.add(second_language)
     db_sess.commit()
-    application.run(port=5001, host='192.168.1.105')
+    application.run(port=5001, host='127.0.0.1')
 
 
 @application.route('/email', methods=['POST'])
@@ -466,6 +466,7 @@ def first_test_create():
                 data.save(f"static/images/temp/{name}.jpg")
                 im = Image.open(f"static/images/temp/{name}.jpg")
                 im1 = im.resize((1600, 900))
+                im1 = im1.convert('RGB')
                 im1.save(f"static/images/temp/{name}.jpg")
 
                 data_temp[str(num)] = f'{name}.jpg'
@@ -725,6 +726,7 @@ def test_create():
                 form.title_picture.data.save(f'static/images/temp/{name}.jpg')
                 im = Image.open(f'static/images/temp/{name}.jpg')
                 im1 = im.resize((1600, 900))
+                im1 = im1.convert('RGB')
                 im1.save(f'static/images/temp/{name}.jpg')
 
                 test.title_picture = f'images/temp/{name}.jpg'
