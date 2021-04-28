@@ -57,7 +57,7 @@ def main():
     file_handler.setLevel(logging.ERROR)
     application.logger.setLevel(logging.ERROR)
     application.logger.addHandler(file_handler)
-    application.run(port=5001, host='192.168.1.105')
+    application.run(port=5001, host='127.0.0.1')
 
 
 @application.route('/email', methods=['POST'])
