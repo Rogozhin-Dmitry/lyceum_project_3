@@ -52,7 +52,13 @@ def main():
     db_sess.add(first_language)
     db_sess.add(second_language)
     db_sess.commit()
-    application.run(port=5001, host='127.0.0.1')
+    import logging
+    from logging.handlers import RotatingFileHandler
+    file_handler = RotatingFileHandler('python.log', maxBytes=1024 * 1024 * 100, backupCount=20)
+    file_handler.setLevel(logging.ERROR)
+    application.logger.setLevel(logging.ERROR)
+    application.logger.addHandler(file_handler)
+    application.run(port=5001, host='192.168.1.105')
 
 
 @application.route('/email', methods=['POST'])
@@ -205,12 +211,15 @@ def test_site(test_id=1):
         return redirect('/login')
     if request.method == 'POST':
         db_sess = db_session.create_session()
+        test_for_save = db_sess.query(Test).filter(Test.id == test_id).first()
         user = db_sess.query(User).filter(User.id == current_user.get_id()).first()
         user_tests = json.loads(user.user_tests)
         if request.form['subscribe_button'] == 'Отписаться':
             user_tests.pop(str(test_id))
+            test_for_save.popularity -= 1
         else:
             user_tests[test_id] = {1: {}, 2: {}, 3: {}, 4: {}}
+            test_for_save.popularity += 1
         user.user_tests = json.dumps(user_tests)
         db_sess.add(user)
         db_sess.commit()
@@ -242,7 +251,6 @@ def second_test(test_id=1, test_type=1):
         test = db_sess.query(Test).filter((Test.id == test_id)).first()
         if not test or str(test.id) not in json.loads(user.user_tests) or not test.type == 'second_tests':
             abort(404)
-        test.popularity += 1
         test_temp = TemporarySecondTest()
         test_temp.user_id = current_user.get_id()
         test_temp.test_id = test.id
@@ -379,7 +387,6 @@ def first_test(test_id=1, test_type=1):
         test = db_sess.query(Test).filter((Test.id == test_id)).first()
         if not test or str(test.id) not in json.loads(user.user_tests) or not test.type == 'first_tests':
             abort(404)
-        test.popularity += 1
         test_temp = TemporaryFirstTest()
         test_temp.user_id = current_user.get_id()
         test_temp.test_id = test.id
@@ -547,7 +554,6 @@ def third_test(test_id=1, test_type=1):
         test = db_sess.query(Test).filter((Test.id == test_id)).first()
         if not test or str(test.id) not in json.loads(user.user_tests) or not test.type == 'third_tests':
             abort(404)
-        test.popularity += 1
         test_temp = TemporaryThirdTest()
         test_temp.user_id = current_user.get_id()
         test_temp.test_id = test.id
@@ -721,7 +727,7 @@ def test_create():
                                                      (CreatedTest.creator == current_user.get_id())).first()
             if form.title_picture.data.filename != '' and \
                     form.title_picture.data.filename[form.title_picture.data.filename.index('.') + 1:] \
-                    in ["jpg", "bmp", "png", "jpeg", "gif", "cdr", "svg"]:
+                    in ["jpg", "bmp", "png", "jpeg"]:
                 name = ''.join(random.choice(string.ascii_lowercase) for _ in range(8))
                 form.title_picture.data.save(f'static/images/temp/{name}.jpg')
                 im = Image.open(f'static/images/temp/{name}.jpg')
@@ -889,6 +895,13 @@ def page_not_found(expression):
     else:
         expression = 403
     return render_template('error_404.html'), expression
+
+
+@application.errorhandler(500)
+def internal_error(exception):
+    print(exception)
+    application.logger.error(exception)
+    return render_template('error_500.html'), 500
 
 
 if __name__ == '__main__':
