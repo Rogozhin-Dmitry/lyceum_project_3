@@ -24,14 +24,14 @@
                                     <div class="content-block-container">
                                         <h2>Язык: {{test.test_language}}</h2>
                                         {% if test.type == 'first_tests'%}
-                                            <h2>Тип теста: Первый тип</h2>
+                                            <h2>Тип теста: Слово-Картинка</h2>
                                         {% elif test.type == 'second_tests'%}
-                                            <h2>Тип теста: Второй тип</h2>
+                                            <h2>Тип теста: 3 формы глагола</h2>
                                         {% else %}
                                             <h2>Тип теста: Список слов</h2>
                                         {% endif %}
                                          <h4>Автор теста <a href="/open_user_tests/{{ test.author.id }}" title="Автор" class="wave-effect">{{ test.author.name }} {{ test.author.surname }}</a></h4>
-                                        <h4>Количество прохождений: {{test.popularity}}</h4>
+                                        <h4>Количество подписчиков: {{test.popularity}}</h4>
                                         <h4>{{test.description}}</h4>
                                         {% if test.author.id|string != current_user.get_id() %}
                                             {% if not subscribe %}

@@ -711,9 +711,9 @@ def test_create():
             for i in str(request.form).split("ImmutableMultiDict([('")[-1].split("')])")[0].split("'), ('"):
                 args[i.split("', '")[0]] = i.split("', '")[1]
             new_test = CreatedTest()
-            if args['types'] == 'Первый тип':
+            if args['types'] == 'Слово-Картинка':
                 new_test.type = 'first_tests'
-            elif args['types'] == 'Второй тип':
+            elif args['types'] == '3 формы глагола':
                 new_test.type = 'second_tests'
             else:
                 new_test.type = 'third_tests'
@@ -761,7 +761,7 @@ def test_create():
                 db_sess.commit()
                 return redirect('/third_test_create')
     return render_template('test_create.html', form=form, languages=[i.name for i in db_sess.query(Category).all()],
-                           types=['Первый тип', 'Второй тип', 'Список слов'])
+                           types=['Слово-Картинка', '3 формы глагола', 'Список слов'])
 
 
 @application.route("/profile")
