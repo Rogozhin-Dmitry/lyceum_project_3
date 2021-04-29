@@ -259,12 +259,12 @@ def second_test(test_id=1, test_type=1):
         else:
             test_data = json.loads(test.data)
             test_data_1 = {}
-            j = 1
+            count = 1
             test_data_keys = list(test_data.keys())
             random.shuffle(test_data_keys)
             for i in test_data_keys:
-                test_data_1[j] = test_data[i]
-                j += 1
+                test_data_1[count] = test_data[i]
+                count += 1
             test_temp.data = json.dumps(test_data_1)
         db_sess.add(test_temp)
         db_sess.commit()
@@ -395,12 +395,12 @@ def first_test(test_id=1, test_type=1):
         else:
             test_data = json.loads(test.data)
             test_data_1 = {}
-            j = 1
+            count = 1
             test_data_keys = list(test_data.keys())
             random.shuffle(test_data_keys)
             for i in test_data_keys:
-                test_data_1[j] = test_data[i]
-                j += 1
+                test_data_1[count] = test_data[i]
+                count += 1
             test_temp.data = json.dumps(test_data_1)
         db_sess.add(test_temp)
         db_sess.commit()
@@ -562,12 +562,12 @@ def third_test(test_id=1, test_type=1):
         elif test_type == 2:
             test_data = json.loads(test.data)
             test_data_1 = {}
-            j = 1
+            count = 1
             test_data_keys = list(test_data.keys())
             random.shuffle(test_data_keys)
             for i in test_data_keys:
-                test_data_1[j] = test_data[i]
-                j += 1
+                test_data_1[count] = test_data[i]
+                count += 1
             test_temp.data = json.dumps(test_data_1)
         elif test_type == 3:
             test_data = json.loads(test.data)
@@ -578,12 +578,12 @@ def third_test(test_id=1, test_type=1):
         else:
             test_data = json.loads(test.data)
             test_data_1 = {}
-            j = 1
+            count = 1
             test_data_keys = list(test_data.keys())
             random.shuffle(test_data_keys)
             for i in test_data_keys:
-                test_data_1[j] = (test_data[i][1], test_data[i][0])
-                j += 1
+                test_data_1[count] = (test_data[i][1], test_data[i][0])
+                count += 1
             test_temp.data = json.dumps(test_data_1)
         db_sess.add(test_temp)
         db_sess.commit()
